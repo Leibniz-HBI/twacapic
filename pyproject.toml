@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "twacapic"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Twitter Academic API Client"
 authors = ["Felix Victor Münch <f.muench@leibniz-hbi.de>"]
 license = "MIT"
@@ -13,6 +13,9 @@ TwitterAPI = "^2.6.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
+
+[tool.poetry.scripts]
+twacapic = 'twacapic.main:run'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
