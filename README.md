@@ -1,11 +1,16 @@
 # twacapic
+
 Twitter Academic API Client
+
+In development. Not even ready for experimental use!
+
 
 ## Installation
 
 Install via pip:
 
 `pip install twacapic`
+
 
 ## Dev Install
 
