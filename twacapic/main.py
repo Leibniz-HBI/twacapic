@@ -6,7 +6,7 @@ from TwitterAPI import TwitterAPI, TwitterOAuth
 def run():
     print("Hello friend …")
 
-    if not os.path.isfile('twacapic_credentials.py'):
+    if not os.path.isfile('twacapic_credentials.txt'):
         print("Please enter your API key:")
         consumer_key = input()
         print("Please enter your API secret:")
@@ -21,7 +21,6 @@ def run():
             ])
 
     keys = TwitterOAuth.read_file('twacapic_credentials.txt')
-    print(keys.consumer_key, keys.consumer_key)
 
     api = TwitterAPI(keys.consumer_key, keys.consumer_secret, auth_type='oAuth2', api_version='2')
 
