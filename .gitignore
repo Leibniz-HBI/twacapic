@@ -140,3 +140,4 @@ cython_debug/
 poetry.lock
 twacapic/twacapic_credentials.py
 twacapic/twacapic_credentials.txt
+twitter_keys.yaml

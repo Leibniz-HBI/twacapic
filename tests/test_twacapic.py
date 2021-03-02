@@ -4,7 +4,7 @@ from twacapic.auth import save_credentials
 
 
 def test_version():
-    assert __version__ == '0.1.3.4'
+    assert __version__ == '0.1.4.0'
 
 
 def test_can_create_credential_yaml(tmp_path):
