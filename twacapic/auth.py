@@ -1,14 +1,15 @@
 import yaml
 
 
-def save_credentials(path, consumer_key, consumer_secret):
+def save_credentials(path, consumer_key=None, consumer_secret=None, bearer_token=None):
 
     content = {
         'search_tweets_v2':
             {
                 'endpoint': 'https://api.twitter.com/2/tweets/search/all',
-                'consumer_key': f'{consumer_key}',
-                'consumer_secret': f'{consumer_secret}',
+                'consumer_key': consumer_key,
+                'consumer_secret': consumer_secret,
+                'bearer_token': bearer_token
             }
     }
 
