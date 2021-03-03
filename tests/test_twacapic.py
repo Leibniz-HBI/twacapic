@@ -1,6 +1,11 @@
+import os
+import shutil
+
+import pytest
 import yaml
 from twacapic import __version__
-from twacapic.auth import save_credentials, read_credentials
+from twacapic.auth import read_credentials, save_credentials
+from twacapic.collect import UserGroup
 
 
 def test_version():
@@ -27,3 +32,21 @@ def test_can_read_credentials():
 
     assert credentials['consumer_key'] == '<CONSUMER_KEY>'
     assert credentials['consumer_secret'] == '<CONSUMER_SECRET>'
+
+
+@pytest.fixture
+def user_group():
+
+    user_group = UserGroup('tests/mock_files/users.csv', name='test_users')
+
+    yield user_group
+
+    shutil.rmtree('results/test_users')
+
+
+def test_user_group_creates_directories(user_group):
+
+    with open('tests/mock_files/users.csv') as file:
+        for line in file:
+            path = f'results/test_users/{line.strip()}'
+            assert os.path.isdir(path), f"Could not find directory for user in {path}"
