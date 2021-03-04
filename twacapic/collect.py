@@ -23,7 +23,9 @@ class UserGroup:
         api = get_api(credential_path)
 
         for user_id in self.user_ids:
-            response = api.request(f'users/:{user_id}/tweets')
+
+            params = {'max_results': 100}
+            response = api.request(f'users/:{user_id}/tweets', params)
 
             assert response.status_code == 200
 
