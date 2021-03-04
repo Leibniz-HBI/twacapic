@@ -1,6 +1,6 @@
 import yaml
-
 from TwitterAPI import TwitterAPI
+
 
 def save_credentials(path, consumer_key=None, consumer_secret=None, bearer_token=None):
 

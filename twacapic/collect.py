@@ -6,17 +6,21 @@ from twacapic.auth import get_api
 
 class UserGroup:
 
-    def __init__(self, path, name):
+    def __init__(self, path=None, name=None):
 
-        self.path = path
+        self.source_path = path
+        self.path = f'results/{name}'
         self.name = name
-        self.user_ids = []
 
-        with open(path, 'r') as file:
-            for line in file:
-                user_id = line.strip()
-                os.makedirs(f'results/{name}/{user_id}', exist_ok=True)
-                self.user_ids.append(user_id)
+        if path is not None:
+            self.user_ids = []
+            with open(path, 'r') as file:
+                for line in file:
+                    user_id = line.strip()
+                    os.makedirs(f'results/{name}/{user_id}', exist_ok=True)
+                    self.user_ids.append(user_id)
+        else:
+            self.user_ids = os.listdir(self.path)
 
     def collect(self, credential_path='twitter_keys.yaml'):
 
