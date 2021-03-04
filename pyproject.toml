@@ -16,6 +16,7 @@ exclude = [
 python = "^3.9"
 PyYAML = "^5.4.1"
 searchtweets-v2 = "^1.0.7"
+TwitterAPI = "^2.6.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"

@@ -1,5 +1,6 @@
 import os
 import shutil
+from glob import glob
 
 import pytest
 import yaml
@@ -50,3 +51,13 @@ def test_user_group_creates_directories(user_group):
         for line in file:
             path = f'results/test_users/{line.strip()}'
             assert os.path.isdir(path), f"Could not find directory for user in {path}"
+
+
+def test_can_retrieve_tweets_from_user_timeline(user_group):
+
+    user_group.collect()
+
+    folders = glob('results/test_users/*')
+
+    for folder in folders:
+        assert len(os.listdir(folder)) >= 1, f'No tweets in user folder {folder}'

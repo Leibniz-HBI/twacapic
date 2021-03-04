@@ -1,5 +1,6 @@
 import yaml
 
+from TwitterAPI import TwitterAPI
 
 def save_credentials(path, consumer_key=None, consumer_secret=None, bearer_token=None):
 
@@ -23,3 +24,13 @@ def read_credentials(path):
         content = yaml.safe_load(file)
 
         return content['search_tweets_v2']
+
+
+def get_api(path):
+
+    credentials = read_credentials(path)
+    consumer_key = credentials['consumer_key']
+    consumer_secret = credentials['consumer_secret']
+
+    return TwitterAPI(consumer_key, consumer_secret,
+                      auth_type='oAuth2', api_version='2')
