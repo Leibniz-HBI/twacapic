@@ -128,4 +128,15 @@ def test_collect_only_new_tweets(user_group_with_old_meta_file):
 
     for user_id in user_group_with_old_meta_file.user_ids:
         files = glob(f'{user_group_with_old_meta_file.path}/{user_id}/*.json')
+
         assert len(files) == 2
+
+        files.sort(reverse=True)
+
+        with open(files[0], 'r') as f:
+            oldest_collected_id = json.load(f)['meta']['oldest_id']
+
+        with open(f'{user_group_with_old_meta_file.path}/{user_id}/meta.yaml') as f:
+            oldest_meta_id = yaml.safe_load(f)['oldest_id']
+
+        assert oldest_collected_id > oldest_meta_id
