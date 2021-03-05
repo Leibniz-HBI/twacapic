@@ -12,6 +12,23 @@ Install via pip:
 `pip install twacapic`
 
 
+## Usage
+
+To collect the latest 100 tweets of a list of users run:
+
+`twacapic USER_GROUP_NAME PATH_TO_USER_CSV`
+
+`USER_GROUP_NAME` should be the name of the results folder that is meant to be created and will contain raw json responses from Twitter.
+
+`PATH_TO_USER_CSV` should be a path to a list of Twitter user IDs, without header, one line per user ID.
+
+Afterwards you can poll for new tweets of a user group by running simply:
+
+`twacapic USER_GROUP_NAME`
+
+Enjoy!
+
+
 ## Dev Install
 
 1. Install [poetry](https://python-poetry.org/docs/#installation)
