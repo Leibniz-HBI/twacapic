@@ -11,7 +11,7 @@ from twacapic.collect import UserGroup
 
 
 def test_version():
-    assert __version__ == '0.1.4.0'
+    assert __version__ == '0.1.4.1'
 
 
 def test_can_create_credential_yaml(tmp_path):

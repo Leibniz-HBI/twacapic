@@ -13,8 +13,6 @@ def run():
         consumer_key = input()
         print("Please enter your API secret:")
         consumer_secret = input()
-        print("Please enter your bearer_token:")
-        consumer_secret = input()
 
         save_credentials('twitter_keys.yaml', consumer_key, consumer_secret)
 
