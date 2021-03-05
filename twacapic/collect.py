@@ -42,7 +42,6 @@ class UserGroup:
                 json.dump(tweets, f, ensure_ascii=False)
 
             meta_file_path = f'results/{self.name}/{user_id}/meta.yaml'
-            print(meta_file_path)
 
             if not os.path.isfile(meta_file_path):
 

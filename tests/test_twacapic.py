@@ -97,3 +97,35 @@ def test_user_in_group_has_meta_file(user_group_with_tweets):
 
         assert tweet_data['meta']['newest_id'] == meta_data['newest_id']
         assert tweet_data['meta']['oldest_id'] == meta_data['oldest_id']
+
+
+@pytest.fixture
+def user_group_with_old_meta_file(user_group_with_tweets, tmp_path):
+
+    shutil.copytree(user_group_with_tweets.path, 'results/users_with_meta')
+
+    user_group = UserGroup(name='users_with_meta')
+
+    for user_id in user_group.user_ids:
+        meta_file_path = f'{user_group.path}/{user_id}/meta.yaml'
+
+        with open(meta_file_path, 'r') as f:
+            metadata = yaml.safe_load(f)
+
+        metadata['newest_id'] = str(int(metadata['newest_id']) - 1)
+
+        with open(meta_file_path, 'w') as f:
+            yaml.dump(metadata, f)
+
+    yield user_group
+
+    shutil.rmtree(user_group.path)
+
+
+def test_collect_only_new_tweets(user_group_with_old_meta_file):
+
+    user_group_with_old_meta_file.collect()
+
+    for user_id in user_group_with_old_meta_file.user_ids:
+        files = glob(f'{user_group_with_old_meta_file.path}/{user_id}/*.json')
+        assert len(files) == 2
