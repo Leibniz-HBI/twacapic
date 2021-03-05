@@ -63,6 +63,7 @@ class UserGroup:
         api = get_api(credential_path)
 
         for user_id in self.user_ids:
+            print(f"Collecting tweets for user {user_id} …")
 
             meta_file_path = f'results/{self.name}/{user_id}/meta.yaml'
 
