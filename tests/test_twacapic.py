@@ -100,7 +100,7 @@ def test_user_in_group_has_meta_file(user_group_with_tweets):
 
 
 @pytest.fixture
-def user_group_with_old_meta_file(user_group_with_tweets, tmp_path):
+def user_group_with_old_meta_file(user_group_with_tweets):
 
     shutil.copytree(user_group_with_tweets.path, 'results/users_with_meta')
 
@@ -140,3 +140,12 @@ def test_collect_only_new_tweets(user_group_with_old_meta_file):
             oldest_meta_id = yaml.safe_load(f)['oldest_id']
 
         assert oldest_collected_id > oldest_meta_id
+
+
+def test_no_new_tweets(user_group_with_tweets):
+
+    user_group_with_tweets.collect()
+
+    for user_id in user_group_with_tweets.user_ids:
+
+        assert len(user_group_with_tweets.tweet_files[user_id]) == 1

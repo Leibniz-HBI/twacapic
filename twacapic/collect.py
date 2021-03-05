@@ -1,5 +1,6 @@
 import json
 import os
+from glob import glob
 
 import yaml
 from twacapic.auth import get_api
@@ -29,6 +30,10 @@ class UserGroup:
         assert response.status_code == 200
 
         tweets = json.loads(response.text)
+
+        if tweets['meta']['result_count'] == 0:
+            return None
+
         oldest_id = tweets['meta']['oldest_id']
         newest_id = tweets['meta']['newest_id']
 
@@ -63,10 +68,20 @@ class UserGroup:
                     user_metadata = yaml.safe_load(metafile)
 
                 params = {'max_results': 100, 'since_id': user_metadata['newest_id']}
-                oldest_id, newest_id = self.request_tweets(api, user_id, params)
 
-                user_metadata['newest_id'] = newest_id
+                collected_ids = self.request_tweets(api, user_id, params)
 
-                with open(meta_file_path, 'w') as metafile:
-                    yaml.dump(user_metadata, metafile)
+                if collected_ids is not None:
+                    oldest_id, newest_id = collected_ids
 
+                    user_metadata['newest_id'] = newest_id
+
+                    with open(meta_file_path, 'w') as metafile:
+                        yaml.dump(user_metadata, metafile)
+
+    @property
+    def tweet_files(self):
+        files = {}
+        for user_id in self.user_ids:
+            files[user_id] = glob(f'{self.path}/{user_id}/*.json')
+        return files
