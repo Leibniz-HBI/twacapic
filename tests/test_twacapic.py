@@ -71,11 +71,11 @@ def test_can_retrieve_tweets_from_user_timeline(user_group_with_tweets):
     folders = glob(f'{user_group_with_tweets.path}/*')
 
     for folder in folders:
-        files = os.listdir(folder)
+        files = glob(f'{folder}/*.json')
 
         assert len(files) >= 1, f'No tweets in user folder {folder}'
 
-        with open(f'{folder}/{files[0]}', 'r') as file:
+        with open(files[0], 'r') as file:
             tweets = json.load(file)
             assert len(tweets['data']) > 90, 'not retrieving maximum of tweets per request'
 
