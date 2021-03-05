@@ -149,3 +149,34 @@ def test_no_new_tweets(user_group_with_tweets):
     for user_id in user_group_with_tweets.user_ids:
 
         assert len(user_group_with_tweets.tweet_files[user_id]) == 1
+
+
+@pytest.fixture
+def user_group_with_very_old_tweets(user_group_with_tweets, user_group):
+
+    for user_id in user_group_with_tweets.user_ids:
+        metadata = user_group_with_tweets.meta[user_id]
+        metadata['newest_id'] = metadata['oldest_id']
+
+        with open(f'{user_group.path}/{user_id}/meta.yaml', 'w') as f:
+            yaml.dump(metadata, f)
+
+    yield user_group
+
+
+def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
+
+    meta_old = user_group_with_very_old_tweets.meta
+
+    user_group_with_very_old_tweets.collect(max_results_per_call=50)
+
+    for user_id in user_group_with_very_old_tweets.user_ids:
+
+        meta_new = user_group_with_very_old_tweets.meta
+        tweet_files = user_group_with_very_old_tweets.tweet_files[user_id]
+        tweet_files.sort(reverse=True)
+        latest_tweet_id = tweet_files[0].split('/')[-1].split('_')[0]
+
+        assert len(tweet_files) == 2
+        assert meta_new[user_id]['newest_id'] == latest_tweet_id
+        assert meta_new[user_id]['oldest_id'] == meta_old[user_id]['oldest_id']

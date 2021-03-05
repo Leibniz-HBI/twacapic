@@ -24,25 +24,41 @@ class UserGroup:
         else:
             self.user_ids = os.listdir(self.path)
 
-    def request_tweets(self, api, user_id, params):
-        response = api.request(f'users/:{user_id}/tweets', params)
+    def request_tweets(self, api, user_id, params, get_all_pages=False):
 
-        assert response.status_code == 200
+        def get_page(params):
+            response = api.request(f'users/:{user_id}/tweets', params)
 
-        tweets = json.loads(response.text)
+            assert response.status_code == 200
 
-        if tweets['meta']['result_count'] == 0:
+            tweets = json.loads(response.text)
+
+            if tweets['meta']['result_count'] == 0:
+                return None
+
+            oldest_id = tweets['meta']['oldest_id']
+            newest_id = tweets['meta']['newest_id']
+
+            with open(f'results/{self.name}/{user_id}/{newest_id}_{oldest_id}.json', 'w', encoding='utf8') as f:
+                json.dump(tweets, f, ensure_ascii=False)
+
+            return oldest_id, newest_id, tweets
+
+        try:
+            oldest_id, newest_id, tweets = get_page(params)
+        except TypeError:
             return None
 
-        oldest_id = tweets['meta']['oldest_id']
-        newest_id = tweets['meta']['newest_id']
+        if get_all_pages is True:
+            while 'next_token' in tweets['meta']:
 
-        with open(f'results/{self.name}/{user_id}/{newest_id}_{oldest_id}.json', 'w', encoding='utf8') as f:
-            json.dump(tweets, f, ensure_ascii=False)
+                params['pagination_token'] = tweets['meta']['next_token']
+
+                oldest_id, new_newest_id, tweets = get_page(params)
 
         return oldest_id, newest_id
 
-    def collect(self, credential_path='twitter_keys.yaml'):
+    def collect(self, credential_path='twitter_keys.yaml', max_results_per_call=100):
 
         api = get_api(credential_path)
 
@@ -52,7 +68,7 @@ class UserGroup:
 
             if not os.path.isfile(meta_file_path):
 
-                params = {'max_results': 100}
+                params = {'max_results': max_results_per_call}
                 oldest_id, newest_id = self.request_tweets(api, user_id, params)
 
                 user_metadata = {}
@@ -67,9 +83,10 @@ class UserGroup:
                 with open(meta_file_path, 'r') as metafile:
                     user_metadata = yaml.safe_load(metafile)
 
-                params = {'max_results': 100, 'since_id': user_metadata['newest_id']}
+                params = {'max_results': max_results_per_call,
+                          'since_id': user_metadata['newest_id']}
 
-                collected_ids = self.request_tweets(api, user_id, params)
+                collected_ids = self.request_tweets(api, user_id, params, get_all_pages=True)
 
                 if collected_ids is not None:
                     oldest_id, newest_id = collected_ids
@@ -85,3 +102,11 @@ class UserGroup:
         for user_id in self.user_ids:
             files[user_id] = glob(f'{self.path}/{user_id}/*.json')
         return files
+
+    @property
+    def meta(self):
+        meta = {}
+        for user_id in self.user_ids:
+            with open(f'{self.path}/{user_id}/meta.yaml', 'r') as f:
+                meta[user_id] = yaml.safe_load(f)
+        return meta
