@@ -4,7 +4,7 @@ Twitter Academic API Client
 
 In development. Expect breaking changes and destructive bugs before updating to the latest version.
 
-Latest presumably working version: 0.1.4.2
+Latest presumably working version: 0.1.4.3
 
 
 ## Installation
@@ -38,4 +38,4 @@ Enjoy!
 3. In the directory run `poetry install`
 4. Run `poetry shell` to start development virtualenv
 5. Run `twacapic` to enter API keys. Ignore the IndexError.
-
+6. Run `pytest` to run all tests

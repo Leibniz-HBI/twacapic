@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "twacapic"
-version = "0.1.4.2"
+version = "0.1.4.3"
 description = "A Twitter Academic API Client"
 authors = ["Felix Victor Münch <f.muench@leibniz-hbi.de>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/Leibniz-HBI/twacapic"
 classifiers = [
-		"Development Status :: 3 - Alpha",
+		"Development Status :: 2 - Pre-Alpha",
 		"Environment :: Console",
 		"Intended Audience :: Science/Research",
 ]
