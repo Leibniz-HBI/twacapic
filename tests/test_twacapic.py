@@ -80,46 +80,20 @@ def test_can_retrieve_tweets_from_user_timeline(user_group_with_tweets):
             assert len(tweets['data']) > 90, 'not retrieving maximum of tweets per request'
 
 
-@pytest.fixture
-def group_without_latest_tweet(user_group_with_tweets):
+def test_user_in_group_has_meta_file(user_group_with_tweets):
 
-    group_path = 'results/group_without_latest_tweet'
-    shutil.copytree(user_group_with_tweets.path, group_path)
+    folders = glob(f'{user_group_with_tweets.path}/*')
 
-    group = UserGroup(name='group_without_latest_tweet')
+    for folder in folders:
 
-    for user_id in group.user_ids:
-        latest_file = glob(f'{group.path}/{user_id}/*')[0]
+        meta_file_path = f'{folder}/meta.yaml'
 
-        with open(latest_file, 'r+') as f:
-            tweets = json.load(f)
-            tweets['data'].pop(0)
-            json.dump(tweets, f)
+        with open(meta_file_path, 'r') as metafile:
+            meta_data = yaml.safe_load(metafile)
 
-    yield group
+        files = glob(f'{folder}/*.json')
+        with open(files[0], 'r') as tweetfile:
+            tweet_data = json.load(tweetfile)
 
-    shutil.rmtree(group_path)
-
-
-def test_can_retrieve_only_new_tweets_from_user(group_without_latest_tweet):
-
-    group_without_latest_tweet.collect()
-
-    for user_id in group_without_latest_tweet.user_ids:
-        user_folder = f'{group_without_latest_tweet.path}/{user_id}'
-        file_list = os.listdir(user_folder)
-
-        assert len(file_list) == 2, "no new tweets collected"
-
-        file_list.sort(reverse=True)
-        print(f'\nfiles in user_folder {user_id}: ', file_list)
-        latest_file = file_list[0]
-        file_before = file_list[1]
-        tweet_before = file_before.split('_')[0]
-        print('latest file: ', latest_file)
-        print('latest_tweet_before: ', tweet_before)
-
-        with open(f'{user_folder}/{latest_file}', 'r') as f:
-            tweets = json.load(f)['data']
-            assert len(tweets) < 10, 'too many tweets collected'
-            assert tweets['meta']['oldest_id'] > tweet_before
+        assert tweet_data['meta']['newest_id'] == meta_data['newest_id']
+        assert tweet_data['meta']['oldest_id'] == meta_data['oldest_id']

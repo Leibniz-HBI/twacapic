@@ -1,6 +1,7 @@
 import json
 import os
 
+import yaml
 from twacapic.auth import get_api
 
 
@@ -39,3 +40,24 @@ class UserGroup:
 
             with open(f'results/{self.name}/{user_id}/{newest_id}_{oldest_id}.json', 'w', encoding='utf8') as f:
                 json.dump(tweets, f, ensure_ascii=False)
+
+            meta_file_path = f'results/{self.name}/{user_id}/meta.yaml'
+            print(meta_file_path)
+
+            if not os.path.isfile(meta_file_path):
+
+                with open(meta_file_path, 'w') as metafile:
+                    user_meta_data = {}
+                    user_meta_data['newest_id'] = 0
+                    user_meta_data['oldest_id'] = 0
+
+                    yaml.dump(user_meta_data, metafile)
+
+            with open(meta_file_path, 'r') as metafile:
+                user_metadata = yaml.safe_load(metafile)
+
+                user_metadata['newest_id'] = newest_id
+                user_metadata['oldest_id'] = oldest_id
+
+            with open(meta_file_path, 'w') as metafile:
+                yaml.dump(user_metadata, metafile)
