@@ -35,4 +35,5 @@ Enjoy!
 2. Clone repository
 3. In the directory run `poetry install`
 4. Run `poetry shell` to start development virtualenv
+5. Run `twacapic` to enter API keys. Ignore the IndexError.
 
