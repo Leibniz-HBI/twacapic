@@ -2,7 +2,9 @@
 
 Twitter Academic API Client
 
-In development. Not even ready for experimental use!
+In development. Expect breaking changes and destructive bugs before updating to the latest version.
+
+Latest presumably working version: 0.1.4.2
 
 
 ## Installation
