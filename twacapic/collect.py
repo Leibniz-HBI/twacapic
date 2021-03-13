@@ -70,11 +70,14 @@ class UserGroup:
             if not os.path.isfile(meta_file_path):
 
                 params = {'max_results': max_results_per_call}
-                oldest_id, newest_id = self.request_tweets(api, user_id, params)
+                collected_ids = self.request_tweets(api, user_id, params)
 
                 user_metadata = {}
-                user_metadata['newest_id'] = newest_id
-                user_metadata['oldest_id'] = oldest_id
+
+                if collected_ids is not None:
+                    oldest_id, newest_id = collected_ids
+                    user_metadata['newest_id'] = newest_id
+                    user_metadata['oldest_id'] = oldest_id
 
                 with open(meta_file_path, 'w') as metafile:
                     yaml.dump(user_metadata, metafile)

@@ -2,12 +2,16 @@ import json
 import os
 import shutil
 from glob import glob
+from unittest.mock import Mock, patch
 
 import pytest
+import twacapic
 import yaml
+from requests.exceptions import ConnectionError
 from twacapic import __version__
 from twacapic.auth import read_credentials, save_credentials
 from twacapic.collect import UserGroup
+from TwitterAPI import TwitterConnectionError, TwitterResponse
 
 
 def test_version():
@@ -180,3 +184,27 @@ def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
         assert len(tweet_files) == 2
         assert meta_new[user_id]['newest_id'] == latest_tweet_id
         assert meta_new[user_id]['oldest_id'] == meta_old[user_id]['oldest_id']
+
+
+def test_twitter_connection_error(user_group):
+
+    mock_response = Mock()
+    options = Mock()
+    mock_response.status_code = 200
+
+    side_effects = [
+        TwitterResponse(mock_response, options),  # success user 1, +1 call
+        TwitterConnectionError(ConnectionError()),  # failure and retry user 2, +2 calls
+        TwitterConnectionError(ConnectionError()),  # failure user 1, +2 calls
+        TwitterResponse(mock_response, options),  # success user 2, +1 call
+    ]
+
+    with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
+                      side_effect=side_effects) as mocked_request_method:
+
+        user_group.collect()
+        assert mocked_request_method.call_count == 6
+
+
+def test_twitter_response_error():  # TODO
+    pass
