@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 import twacapic
+import TwitterAPI
 import yaml
 from requests.exceptions import ConnectionError
 from twacapic import __version__
@@ -200,12 +201,39 @@ def successful_response_mock(user_group_with_tweets):
     yield TwitterResponse(mock_response, options)
 
 
+@pytest.fixture(scope='module')
+def failed_response_mock(user_group_with_tweets):
+
+    mock_response = Mock()
+    options = Mock()
+    mock_response.status_code = 42
+
+    mock_response.text = 'The answer to life the universe & everything.'
+
+    yield TwitterResponse(mock_response, options)
+
+
 def test_twitter_connection_error(user_group, successful_response_mock):
 
     side_effects = [
         successful_response_mock,  # success user 1
         TwitterConnectionError(ConnectionError()),  # failure user 2
         successful_response_mock  # success user 2
+    ]
+
+    with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
+                      side_effect=side_effects) as mocked_request_method:
+
+        user_group.collect()
+        assert mocked_request_method.call_count == 3
+
+
+def test_twitter_request_error(user_group, successful_response_mock, failed_response_mock):
+
+    side_effects = [
+            successful_response_mock,  # success user 1
+            failed_response_mock,  # failure user 2
+            successful_response_mock  # success user 2
     ]
 
     with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
