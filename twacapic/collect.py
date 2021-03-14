@@ -1,9 +1,11 @@
 import json
 import os
+import time
 from glob import glob
 
 import yaml
 from twacapic.auth import get_api
+from TwitterAPI import TwitterConnectionError, TwitterRequestError
 
 
 class UserGroup:
@@ -26,7 +28,9 @@ class UserGroup:
 
     def request_tweets(self, api, user_id, params, get_all_pages=False):
 
+        @retry
         def get_page(params):
+
             response = api.request(f'users/:{user_id}/tweets', params)
 
             assert response.status_code == 200
@@ -114,3 +118,39 @@ class UserGroup:
             with open(f'{self.path}/{user_id}/meta.yaml', 'r') as f:
                 meta[user_id] = yaml.safe_load(f)
         return meta
+
+
+def retry(func):
+
+    def retried_func(*args, **kwargs):
+        max_tries = 10
+        tries = 0
+        total_sleep_seconds = 0
+
+        while True:
+            try:
+                resp = func(*args, **kwargs)
+
+            except (TwitterConnectionError, TwitterRequestError, AssertionError) as e:
+
+                print(e)
+
+                if tries < max_tries:
+
+                    tries += 1
+
+                    sleep_seconds = min((tries ** 2), max(900 - total_sleep_seconds, 30))
+                    total_sleep_seconds = total_sleep_seconds + sleep_seconds
+                else:
+                    print('Maximum retries reached. Raising Exception …')
+                    raise e
+
+                print(f"Retry in {sleep_seconds} seconds …")
+                time.sleep(sleep_seconds)
+                continue
+
+            break
+
+        return resp
+
+    return retried_func

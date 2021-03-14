@@ -11,7 +11,8 @@ from requests.exceptions import ConnectionError
 from twacapic import __version__
 from twacapic.auth import read_credentials, save_credentials
 from twacapic.collect import UserGroup
-from TwitterAPI import TwitterConnectionError, TwitterResponse
+from TwitterAPI import (TwitterConnectionError, TwitterRequestError,
+                        TwitterResponse)
 
 
 def test_version():
@@ -186,25 +187,29 @@ def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
         assert meta_new[user_id]['oldest_id'] == meta_old[user_id]['oldest_id']
 
 
-def test_twitter_connection_error(user_group):
+@pytest.fixture(scope='module')
+def successful_response_mock(user_group_with_tweets):
+    tweet_file = glob(f'{user_group_with_tweets.path}/*/*.json')[0]
 
     mock_response = Mock()
     options = Mock()
     mock_response.status_code = 200
+    with open(tweet_file, 'r') as tweets:
+        mock_response.text = tweets.read()
+
+    yield TwitterResponse(mock_response, options)
+
+
+def test_twitter_connection_error(user_group, successful_response_mock):
 
     side_effects = [
-        TwitterResponse(mock_response, options),  # success user 1, +1 call
-        TwitterConnectionError(ConnectionError()),  # failure and retry user 2, +2 calls
-        TwitterConnectionError(ConnectionError()),  # failure user 1, +2 calls
-        TwitterResponse(mock_response, options),  # success user 2, +1 call
+        successful_response_mock,  # success user 1
+        TwitterConnectionError(ConnectionError()),  # failure user 2
+        successful_response_mock  # success user 2
     ]
 
     with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
                       side_effect=side_effects) as mocked_request_method:
 
         user_group.collect()
-        assert mocked_request_method.call_count == 6
-
-
-def test_twitter_response_error():  # TODO
-    pass
+        assert mocked_request_method.call_count == 3
