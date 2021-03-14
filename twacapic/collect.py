@@ -5,7 +5,7 @@ from glob import glob
 
 import yaml
 from twacapic.auth import get_api
-from TwitterAPI import TwitterConnectionError, TwitterRequestError
+from TwitterAPI.TwitterError import TwitterConnectionError, TwitterRequestError
 
 
 class UserGroup:
@@ -139,7 +139,7 @@ def retry(func):
 
                     tries += 1
 
-                    sleep_seconds = min((tries ** 2), max(900 - total_sleep_seconds, 30))
+                    sleep_seconds = min(((tries * 2) ** 2), max(900 - total_sleep_seconds, 30))
                     total_sleep_seconds = total_sleep_seconds + sleep_seconds
                 else:
                     print('Maximum retries reached. Raising Exception …')

@@ -11,11 +11,12 @@ from requests.exceptions import ConnectionError
 from twacapic import __version__
 from twacapic.auth import read_credentials, save_credentials
 from twacapic.collect import UserGroup
-from TwitterAPI import TwitterConnectionError, TwitterResponse
+from TwitterAPI import TwitterResponse
+from TwitterAPI.TwitterError import TwitterConnectionError
 
 
 def test_version():
-    assert __version__ == '0.1.4.4'
+    assert __version__ == '0.1.4.5'
 
 
 def test_can_create_credential_yaml(tmp_path):
@@ -239,3 +240,31 @@ def test_twitter_request_error(user_group, successful_response_mock, failed_resp
 
         user_group.collect()
         assert mocked_request_method.call_count == 3
+
+
+def test_stops_after_10_request_errors(user_group, failed_response_mock):
+
+    side_effects = [failed_response_mock] * 11
+
+    with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
+                      side_effect=side_effects) as mocked_request_method:
+        with patch.object(twacapic.collect.time, 'sleep'):
+
+            with pytest.raises(AssertionError):
+                user_group.collect()
+
+            assert mocked_request_method.call_count == 11
+
+
+def test_stops_after_10_connection_errors(user_group, failed_response_mock):
+
+    side_effects = [TwitterConnectionError(ConnectionError())] * 11
+
+    with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
+                      side_effect=side_effects) as mocked_request_method:
+        with patch.object(twacapic.collect.time, 'sleep'):
+
+            with pytest.raises(TwitterConnectionError):
+                user_group.collect()
+
+            assert mocked_request_method.call_count == 11
