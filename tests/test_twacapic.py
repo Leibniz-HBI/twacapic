@@ -6,18 +6,16 @@ from unittest.mock import Mock, patch
 
 import pytest
 import twacapic
-import TwitterAPI
 import yaml
 from requests.exceptions import ConnectionError
 from twacapic import __version__
 from twacapic.auth import read_credentials, save_credentials
 from twacapic.collect import UserGroup
-from TwitterAPI import (TwitterConnectionError, TwitterRequestError,
-                        TwitterResponse)
+from TwitterAPI import TwitterConnectionError, TwitterResponse
 
 
 def test_version():
-    assert __version__ == '0.1.4.3'
+    assert __version__ == '0.1.4.4'
 
 
 def test_can_create_credential_yaml(tmp_path):
