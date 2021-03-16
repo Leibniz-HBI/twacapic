@@ -14,9 +14,23 @@ Install via pip:
 
 ## Usage
 
-To collect the latest 100 tweets of a list of users run:
+At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name.
 
-`twacapic USER_GROUP_NAME PATH_TO_USER_CSV`
+```shell
+> twacapic -h  
+usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USERLIST, --userlist USERLIST
+                        path to list of user IDs, one per line
+  -g GROUPNAME, --groupname GROUPNAME
+                        name of the group to collect
+```
+
+### Example
+
+`twacapic -g USER_GROUP_NAME -u PATH_TO_USER_CSV`
 
 `USER_GROUP_NAME` should be the name of the results folder that is meant to be created and will contain raw json responses from Twitter.
 
@@ -24,7 +38,7 @@ To collect the latest 100 tweets of a list of users run:
 
 Afterwards you can poll for new tweets of a user group by running simply:
 
-`twacapic USER_GROUP_NAME`
+`twacapic -g USER_GROUP_NAME`
 
 Enjoy!
 
