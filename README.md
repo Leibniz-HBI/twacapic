@@ -14,21 +14,23 @@ Install via pip:
 
 ## Usage
 
-At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name.
-
-```shell
-> twacapic -h  
+```
 usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USERLIST, --userlist USERLIST
-                        path to list of user IDs, one per line
+                        path to list of user IDs, one per line. Required for
+                        first run only. Can be used to add users to a group
   -g GROUPNAME, --groupname GROUPNAME
-                        name of the group to collect
+                        name of the group to collect. Results will be saved in
+                        folder `results/GROUPNAME/`. Can be used to poll for
+                        new tweets of a group. Default: "users"
 ```
 
 ### Example
+
+At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name.
 
 `twacapic -g USER_GROUP_NAME -u PATH_TO_USER_CSV`
 

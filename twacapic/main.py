@@ -8,8 +8,15 @@ from twacapic.collect import UserGroup
 def run():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--userlist', help='path to list of user IDs, one per line')
-    parser.add_argument('-g', '--groupname', help='name of the group to collect', default='users')
+    parser.add_argument('-u', '--userlist',
+                        help='path to list of user IDs, one per line. \
+                        Required for first run only. Can be used to add users to a group')
+    parser.add_argument('-g', '--groupname',
+                        help='name of the group to collect.\
+                        Results will be saved in folder `results/GROUPNAME/`.\
+                        Can be used to poll for new tweets of a group.\
+                        Default: "users"',
+                        default='users')
     args = parser.parse_args()
 
     print("Hello friend …")
