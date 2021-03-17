@@ -19,6 +19,14 @@ def test_version():
     assert __version__ == '0.2.0'
 
 
+def test_run(script_runner):
+    ret = script_runner.run('twacapic', '-g', 'test_run', '-u', 'tests/mock_files/users.csv')
+    assert ret.success
+    assert ret.stderr == ''
+    assert '36476777' in ret.stdout
+    shutil.rmtree('results/test_run')
+
+
 def test_can_create_credential_yaml(tmp_path):
 
     tmp_yaml_path = tmp_path.joinpath('twitter_keys.yaml')
@@ -268,11 +276,3 @@ def test_stops_after_10_connection_errors(user_group, failed_response_mock):
                 user_group.collect()
 
             assert mocked_request_method.call_count == 11
-
-
-def test_run(script_runner):
-    ret = script_runner.run('twacapic', '-g', 'test_run', '-u', 'tests/mock_files/users.csv')
-    assert ret.success
-    assert ret.stderr == ''
-    assert '36476777' in ret.stdout
-    shutil.rmtree('results/test_run')

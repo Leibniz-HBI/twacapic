@@ -1,0 +1,28 @@
+fields:
+  attachments: Yes
+  author_id: Yes
+  context_annotations: Yes
+  conversation_id: Yes
+  created_at: Yes
+  entities: Yes
+  geo: Yes
+  in_reply_to_user_id: Yes
+  lang: Yes
+  non_public_metrics: No
+  organic_metrics: No
+  possibly_sensitive: Yes
+  promoted_metrics: No
+  public_metrics: Yes
+  referenced_tweets: Yes
+  reply_settings: Yes
+  source: Yes
+  withheld: Yes
+expansions:
+  author_id: Yes
+  referenced_tweets.id: Yes
+  in_reply_to_user_id: Yes
+  attachments.media_keys: Yes
+  attachments.poll_ids: Yes
+  geo.place_id: Yes
+  entities.mentions.username: Yes
+  referenced_tweet.id.author_id: Yes
