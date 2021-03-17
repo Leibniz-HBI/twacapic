@@ -26,6 +26,7 @@ TwitterAPI = "^2.6.9"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
 coverage = "^5.5"
+pytest-console-scripts = "^1.1.0"
 
 [tool.poetry.scripts]
 twacapic = 'twacapic.main:run'

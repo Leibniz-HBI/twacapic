@@ -268,3 +268,11 @@ def test_stops_after_10_connection_errors(user_group, failed_response_mock):
                 user_group.collect()
 
             assert mocked_request_method.call_count == 11
+
+
+def test_run(script_runner):
+    ret = script_runner.run('twacapic', '-g', 'test_run', '-u', 'tests/mock_files/users.csv')
+    assert ret.success
+    assert ret.stderr == ''
+    assert '36476777' in ret.stdout
+    shutil.rmtree('results/test_run')
