@@ -25,4 +25,4 @@ expansions:
   attachments.poll_ids: Yes
   geo.place_id: Yes
   entities.mentions.username: Yes
-  referenced_tweet.id.author_id: Yes
+  referenced_tweets.id.author_id: Yes

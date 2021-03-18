@@ -335,8 +335,6 @@ def test_fields_in_tweets(user_group_with_tweets):
 
     user_group = user_group_with_tweets
 
-    print(user_group.tweet_files)
-
     for user_id in user_group.user_ids:
         for file in user_group.tweet_files[user_id]:
             with open(file, 'r') as f:
@@ -348,3 +346,14 @@ def test_fields_in_tweets(user_group_with_tweets):
                             if field in tweet:
                                 number_of_fields += 1
                     assert number_of_fields > 2
+
+
+def test_expansions_in_tweets(user_group_with_tweets):
+
+    for user_id in user_group_with_tweets.user_ids:
+        for file in user_group_with_tweets.tweet_files[user_id]:
+            with open(file, 'r') as f:
+                tweets = json.load(f)
+                assert 'includes' in tweets
+                assert 'users' in tweets['includes']
+                assert 'tweets' in tweets['includes']

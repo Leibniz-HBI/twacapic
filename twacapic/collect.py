@@ -67,6 +67,8 @@ class UserGroup:
 
             response = api.request(f'users/:{user_id}/tweets', params)
 
+            # print(response.text)
+
             assert response.status_code == 200
 
             tweets = json.loads(response.text)
@@ -107,10 +109,17 @@ class UserGroup:
             field for field in field_config if field_config[field]
         ]
 
+        expansions_config = self.config['expansions']
+
+        expansions = [
+            expansion for expansion in expansions_config if expansions_config[expansion]
+        ]
+
         for user_id in self.user_ids:
 
             params = {}
             params['tweet.fields'] = ','.join(fields)
+            params['expansions'] = ','.join(expansions)
 
             print(f"Collecting tweets for user {user_id} …")
 
