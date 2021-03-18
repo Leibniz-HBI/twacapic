@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 import twacapic
+import twacapic.templates
 import yaml
 from requests.exceptions import ConnectionError
 from twacapic import __version__
@@ -81,7 +82,7 @@ def user_group_with_tweets():
 
 def test_can_retrieve_tweets_from_user_timeline(user_group_with_tweets):
 
-    folders = glob(f'{user_group_with_tweets.path}/*')
+    folders = glob(f'{user_group_with_tweets.path}/*/')
 
     for folder in folders:
         files = glob(f'{folder}/*.json')
@@ -95,7 +96,7 @@ def test_can_retrieve_tweets_from_user_timeline(user_group_with_tweets):
 
 def test_user_in_group_has_meta_file(user_group_with_tweets):
 
-    folders = glob(f'{user_group_with_tweets.path}/*')
+    folders = glob(f'{user_group_with_tweets.path}/*/')
 
     for folder in folders:
 
@@ -276,3 +277,49 @@ def test_stops_after_10_connection_errors(user_group, failed_response_mock):
                 user_group.collect()
 
             assert mocked_request_method.call_count == 11
+
+
+def test_can_import_group_config():
+    group_config = twacapic.templates.group_config
+
+    assert 'expansions' in group_config
+    assert 'fields' in group_config
+
+
+def test_group_has_default_config(user_group):
+    assert 'group_config.yaml' in os.listdir(user_group.path)
+
+
+@pytest.fixture
+def minimal_config_path():
+    path = 'minimal_config.yaml'
+    min_config = {'expansions': {}, 'fields': {}}
+    with open(path, 'w') as f:
+        yaml.dump(min_config, f)
+
+    yield path
+
+    os.remove(path)
+
+
+@pytest.fixture
+def group_with_minimal_config(minimal_config_path):
+    user_group = UserGroup(
+        'tests/mock_files/users.csv',
+        name='test_users_with_min_config',
+        config=minimal_config_path
+    )
+
+    yield user_group
+
+    shutil.rmtree(user_group.path)
+
+
+def test_can_use_custom_config(group_with_minimal_config):
+    user_group = group_with_minimal_config
+
+    with open(f'{user_group.path}/group_config.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+
+        assert config['expansions'] == {}
+        assert config['fields'] == {}

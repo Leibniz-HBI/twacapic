@@ -1,16 +1,18 @@
 import json
 import os
+import shutil
 import time
 from glob import glob
 
 import yaml
+import twacapic.templates
 from twacapic.auth import get_api
 from TwitterAPI.TwitterError import TwitterConnectionError, TwitterRequestError
 
 
 class UserGroup:
 
-    def __init__(self, path=None, name=None):
+    def __init__(self, path=None, name=None, config=None):
 
         self.source_path = path
         self.path = f'results/{name}'
@@ -24,7 +26,16 @@ class UserGroup:
                     os.makedirs(f'results/{name}/{user_id}', exist_ok=True)
                     self.user_ids.append(user_id)
         else:
-            self.user_ids = os.listdir(self.path)
+            self.user_ids = [
+                item for item in os.listdir(self.path) if os.path.isdir(os.path.join(self.path, item))
+            ]
+
+        if config is not None:
+            shutil.copy(config, f'{self.path}/group_config.yaml')
+        else:
+            print(twacapic.templates.group_config)
+            with open(f'{self.path}/group_config.yaml', 'w') as f:
+                yaml.dump(twacapic.templates.group_config, f)
 
     def request_tweets(self, api, user_id, params, get_all_pages=False):
 
