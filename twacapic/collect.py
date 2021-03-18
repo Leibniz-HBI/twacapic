@@ -4,8 +4,8 @@ import shutil
 import time
 from glob import glob
 
-import yaml
 import twacapic.templates
+import yaml
 from twacapic.auth import get_api
 from TwitterAPI.TwitterError import TwitterConnectionError, TwitterRequestError
 
@@ -27,7 +27,9 @@ class UserGroup:
                     self.user_ids.append(user_id)
         else:
             self.user_ids = [
-                item for item in os.listdir(self.path) if os.path.isdir(os.path.join(self.path, item))
+                item for item in os.listdir(self.path) if os.path.isdir(
+                    os.path.join(self.path, item)
+                    )
             ]
 
         if config is not None:
@@ -36,6 +38,28 @@ class UserGroup:
             print(twacapic.templates.group_config)
             with open(f'{self.path}/group_config.yaml', 'w') as f:
                 yaml.dump(twacapic.templates.group_config, f)
+
+    @property
+    def config(self):
+        with open(f'{self.path}/group_config.yaml', 'r') as f:
+            config = yaml.safe_load(f)
+
+            return config
+
+    @property
+    def tweet_files(self):
+        files = {}
+        for user_id in self.user_ids:
+            files[user_id] = glob(f'{self.path}/{user_id}/*.json')
+        return files
+
+    @property
+    def meta(self):
+        meta = {}
+        for user_id in self.user_ids:
+            with open(f'{self.path}/{user_id}/meta.yaml', 'r') as f:
+                meta[user_id] = yaml.safe_load(f)
+        return meta
 
     def request_tweets(self, api, user_id, params, get_all_pages=False):
 
@@ -54,7 +78,8 @@ class UserGroup:
             oldest_id = tweets['meta']['oldest_id']
             newest_id = tweets['meta']['newest_id']
 
-            with open(f'results/{self.name}/{user_id}/{newest_id}_{oldest_id}.json', 'w', encoding='utf8') as f:
+            with open(f'results/{self.name}/{user_id}/{newest_id}_{oldest_id}.json', 'w',
+                      encoding='utf8') as f:
                 json.dump(tweets, f, ensure_ascii=False)
 
             return oldest_id, newest_id, tweets
@@ -114,21 +139,6 @@ class UserGroup:
 
                     with open(meta_file_path, 'w') as metafile:
                         yaml.dump(user_metadata, metafile)
-
-    @property
-    def tweet_files(self):
-        files = {}
-        for user_id in self.user_ids:
-            files[user_id] = glob(f'{self.path}/{user_id}/*.json')
-        return files
-
-    @property
-    def meta(self):
-        meta = {}
-        for user_id in self.user_ids:
-            with open(f'{self.path}/{user_id}/meta.yaml', 'r') as f:
-                meta[user_id] = yaml.safe_load(f)
-        return meta
 
 
 def retry(func):

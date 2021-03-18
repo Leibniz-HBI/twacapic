@@ -323,3 +323,22 @@ def test_can_use_custom_config(group_with_minimal_config):
 
         assert config['expansions'] == {}
         assert config['fields'] == {}
+
+
+def test_fields_in_tweets(user_group_with_tweets):
+
+    user_group = user_group_with_tweets
+
+    print(user_group.tweet_files)
+
+    for user_id in user_group.user_ids:
+        for file in user_group.tweet_files[user_id]:
+            with open(file, 'r') as f:
+                tweets = json.load(f)
+                for tweet in tweets['data']:
+                    number_of_fields = 0
+                    for field in user_group.config['fields']:
+                        if user_group.config['fields'][field]:
+                            if field in tweet:
+                                number_of_fields += 1
+                    assert number_of_fields > 2
