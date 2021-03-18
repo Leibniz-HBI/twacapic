@@ -29,6 +29,7 @@ coverage = "^5.5"
 pytest-console-scripts = "^1.1.0"
 flake8 = "^3.9.0"
 autopep8 = "^1.5.6"
+pytest-timeout = "^1.4.2"
 
 [tool.poetry.scripts]
 twacapic = 'twacapic.main:run'

@@ -35,7 +35,6 @@ class UserGroup:
         if config is not None:
             shutil.copy(config, f'{self.path}/group_config.yaml')
         else:
-            print(twacapic.templates.group_config)
             with open(f'{self.path}/group_config.yaml', 'w') as f:
                 yaml.dump(twacapic.templates.group_config, f)
 
@@ -102,14 +101,24 @@ class UserGroup:
 
         api = get_api(credential_path)
 
+        field_config = self.config['fields']
+
+        fields = [
+            field for field in field_config if field_config[field]
+        ]
+
         for user_id in self.user_ids:
+
+            params = {}
+            params['tweet.fields'] = ','.join(fields)
+
             print(f"Collecting tweets for user {user_id} …")
 
-            meta_file_path = f'results/{self.name}/{user_id}/meta.yaml'
+            meta_file_path = f'{self.path}/{user_id}/meta.yaml'
 
             if not os.path.isfile(meta_file_path):
 
-                params = {'max_results': max_results_per_call}
+                params['max_results'] = max_results_per_call
                 collected_ids = self.request_tweets(api, user_id, params)
 
                 user_metadata = {}
@@ -127,8 +136,8 @@ class UserGroup:
                 with open(meta_file_path, 'r') as metafile:
                     user_metadata = yaml.safe_load(metafile)
 
-                params = {'max_results': max_results_per_call,
-                          'since_id': user_metadata['newest_id']}
+                params['max_results'] = max_results_per_call
+                params['since_id'] = user_metadata['newest_id']
 
                 collected_ids = self.request_tweets(api, user_id, params, get_all_pages=True)
 

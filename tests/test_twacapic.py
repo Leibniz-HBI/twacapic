@@ -16,6 +16,120 @@ from TwitterAPI import TwitterResponse
 from TwitterAPI.TwitterError import TwitterConnectionError
 
 
+@pytest.fixture
+def user_group():
+
+    user_group = UserGroup('tests/mock_files/users.csv', name='test_users')
+
+    yield user_group
+
+    shutil.rmtree('results/test_users')
+
+
+@pytest.fixture(scope='module')
+def user_group_with_tweets():
+
+    user_group = UserGroup('tests/mock_files/users.csv', name='test_users_with_tweets')
+
+    user_group.collect()
+
+    yield user_group
+
+    shutil.rmtree(user_group.path)
+
+
+@pytest.fixture
+def user_group_with_old_meta_file(user_group_with_tweets):
+
+    shutil.copytree(user_group_with_tweets.path, 'results/users_with_meta')
+
+    user_group = UserGroup(name='users_with_meta')
+
+    for user_id in user_group.user_ids:
+        meta_file_path = f'{user_group.path}/{user_id}/meta.yaml'
+
+        with open(meta_file_path, 'r') as f:
+            metadata = yaml.safe_load(f)
+
+        metadata['newest_id'] = str(int(metadata['newest_id']) - 1)
+
+        with open(meta_file_path, 'w') as f:
+            yaml.dump(metadata, f)
+
+    yield user_group
+
+    shutil.rmtree(user_group.path)
+
+
+@pytest.fixture
+def user_group_with_very_old_tweets(user_group_with_tweets, user_group):
+
+    shutil.copytree(user_group.path, 'results/users_with_very_old_tweets')
+
+    user_group = UserGroup(name='users_with_very_old_tweets')
+
+    for user_id in user_group_with_tweets.user_ids:
+        metadata = user_group_with_tweets.meta[user_id]
+        metadata['newest_id'] = metadata['oldest_id']
+
+        with open(f'{user_group.path}/{user_id}/meta.yaml', 'w') as f:
+            yaml.dump(metadata, f)
+
+    yield user_group
+
+    shutil.rmtree(user_group.path)
+
+
+@pytest.fixture(scope='module')
+def successful_response_mock(user_group_with_tweets):
+    tweet_file = glob(f'{user_group_with_tweets.path}/*/*.json')[0]
+
+    mock_response = Mock()
+    options = Mock()
+    mock_response.status_code = 200
+    with open(tweet_file, 'r') as tweets:
+        mock_response.text = tweets.read()
+
+    yield TwitterResponse(mock_response, options)
+
+
+@pytest.fixture(scope='module')
+def failed_response_mock(user_group_with_tweets):
+
+    mock_response = Mock()
+    options = Mock()
+    mock_response.status_code = 42
+
+    mock_response.text = 'The answer to life the universe & everything.'
+
+    yield TwitterResponse(mock_response, options)
+
+
+@pytest.fixture
+def minimal_config_path():
+    path = 'minimal_config.yaml'
+    min_config = {'expansions': {}, 'fields': {}}
+    with open(path, 'w') as f:
+        yaml.dump(min_config, f)
+
+    yield path
+
+    os.remove(path)
+
+
+@pytest.fixture
+def group_with_minimal_config(minimal_config_path):
+    user_group = UserGroup(
+        'tests/mock_files/users.csv',
+        name='test_users_with_min_config',
+        config=minimal_config_path
+    )
+
+    yield user_group
+
+    shutil.rmtree(user_group.path)
+
+
 def test_version():
     assert __version__ == '0.2.0'
 
@@ -50,34 +164,12 @@ def test_can_read_credentials():
     assert credentials['consumer_secret'] == '<CONSUMER_SECRET>'
 
 
-@pytest.fixture
-def user_group():
-
-    user_group = UserGroup('tests/mock_files/users.csv', name='test_users')
-
-    yield user_group
-
-    shutil.rmtree('results/test_users')
-
-
 def test_user_group_creates_directories(user_group):
 
     with open('tests/mock_files/users.csv') as file:
         for line in file:
             path = f'results/test_users/{line.strip()}'
             assert os.path.isdir(path), f"Could not find directory for user in {path}"
-
-
-@pytest.fixture(scope='module')
-def user_group_with_tweets():
-
-    user_group = UserGroup('tests/mock_files/users.csv', name='test_users_with_tweets')
-
-    user_group.collect()
-
-    yield user_group
-
-    shutil.rmtree(user_group.path)
 
 
 def test_can_retrieve_tweets_from_user_timeline(user_group_with_tweets):
@@ -113,29 +205,6 @@ def test_user_in_group_has_meta_file(user_group_with_tweets):
         assert tweet_data['meta']['oldest_id'] == meta_data['oldest_id']
 
 
-@pytest.fixture
-def user_group_with_old_meta_file(user_group_with_tweets):
-
-    shutil.copytree(user_group_with_tweets.path, 'results/users_with_meta')
-
-    user_group = UserGroup(name='users_with_meta')
-
-    for user_id in user_group.user_ids:
-        meta_file_path = f'{user_group.path}/{user_id}/meta.yaml'
-
-        with open(meta_file_path, 'r') as f:
-            metadata = yaml.safe_load(f)
-
-        metadata['newest_id'] = str(int(metadata['newest_id']) - 1)
-
-        with open(meta_file_path, 'w') as f:
-            yaml.dump(metadata, f)
-
-    yield user_group
-
-    shutil.rmtree(user_group.path)
-
-
 def test_collect_only_new_tweets(user_group_with_old_meta_file):
 
     user_group_with_old_meta_file.collect()
@@ -165,19 +234,6 @@ def test_no_new_tweets(user_group_with_tweets):
         assert len(user_group_with_tweets.tweet_files[user_id]) == 1
 
 
-@pytest.fixture
-def user_group_with_very_old_tweets(user_group_with_tweets, user_group):
-
-    for user_id in user_group_with_tweets.user_ids:
-        metadata = user_group_with_tweets.meta[user_id]
-        metadata['newest_id'] = metadata['oldest_id']
-
-        with open(f'{user_group.path}/{user_id}/meta.yaml', 'w') as f:
-            yaml.dump(metadata, f)
-
-    yield user_group
-
-
 def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
 
     meta_old = user_group_with_very_old_tweets.meta
@@ -194,31 +250,6 @@ def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
         assert len(tweet_files) == 2
         assert meta_new[user_id]['newest_id'] == latest_tweet_id
         assert meta_new[user_id]['oldest_id'] == meta_old[user_id]['oldest_id']
-
-
-@pytest.fixture(scope='module')
-def successful_response_mock(user_group_with_tweets):
-    tweet_file = glob(f'{user_group_with_tweets.path}/*/*.json')[0]
-
-    mock_response = Mock()
-    options = Mock()
-    mock_response.status_code = 200
-    with open(tweet_file, 'r') as tweets:
-        mock_response.text = tweets.read()
-
-    yield TwitterResponse(mock_response, options)
-
-
-@pytest.fixture(scope='module')
-def failed_response_mock(user_group_with_tweets):
-
-    mock_response = Mock()
-    options = Mock()
-    mock_response.status_code = 42
-
-    mock_response.text = 'The answer to life the universe & everything.'
-
-    yield TwitterResponse(mock_response, options)
 
 
 def test_twitter_connection_error(user_group, successful_response_mock):
@@ -288,31 +319,6 @@ def test_can_import_group_config():
 
 def test_group_has_default_config(user_group):
     assert 'group_config.yaml' in os.listdir(user_group.path)
-
-
-@pytest.fixture
-def minimal_config_path():
-    path = 'minimal_config.yaml'
-    min_config = {'expansions': {}, 'fields': {}}
-    with open(path, 'w') as f:
-        yaml.dump(min_config, f)
-
-    yield path
-
-    os.remove(path)
-
-
-@pytest.fixture
-def group_with_minimal_config(minimal_config_path):
-    user_group = UserGroup(
-        'tests/mock_files/users.csv',
-        name='test_users_with_min_config',
-        config=minimal_config_path
-    )
-
-    yield user_group
-
-    shutil.rmtree(user_group.path)
 
 
 def test_can_use_custom_config(group_with_minimal_config):
