@@ -34,7 +34,7 @@ class UserGroup:
 
         if config is not None:
             shutil.copy(config, f'{self.path}/group_config.yaml')
-        else:
+        elif not os.path.isfile(f'{self.path}/group_config.yaml'):
             with open(f'{self.path}/group_config.yaml', 'w') as f:
                 yaml.dump(twacapic.templates.group_config, f)
 
