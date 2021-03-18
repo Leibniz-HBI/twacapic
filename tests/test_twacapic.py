@@ -16,6 +16,10 @@ from TwitterAPI import TwitterResponse
 from TwitterAPI.TwitterError import TwitterConnectionError
 
 
+def test_version():
+    assert __version__ == '0.3.0'
+
+
 @pytest.fixture
 def user_group():
 
@@ -128,10 +132,6 @@ def group_with_minimal_config(minimal_config_path):
     yield user_group
 
     shutil.rmtree(user_group.path)
-
-
-def test_version():
-    assert __version__ == '0.2.0'
 
 
 def test_run(script_runner):
