@@ -135,7 +135,12 @@ def group_with_minimal_config(minimal_config_path):
 
 
 def test_run(script_runner):
-    ret = script_runner.run('twacapic', '-g', 'test_run', '-u', 'tests/mock_files/users.csv')
+    ret = script_runner.run(
+        'twacapic',
+        '-g', 'test_run',
+        '-u', 'tests/mock_files/users.csv',
+        '-c', 'twacapic/templates/group_config.yaml'
+    )
     assert ret.success
     assert ret.stderr == ''
     assert '36476777' in ret.stdout
@@ -329,6 +334,26 @@ def test_can_use_custom_config(group_with_minimal_config):
 
         assert config['expansions'] == {}
         assert config['fields'] == {}
+
+
+def test_group_retains_config(group_with_minimal_config, successful_response_mock):
+
+    side_effects = [
+        successful_response_mock,  # success user 1
+        successful_response_mock  # success user 2
+    ]
+
+    with patch.object(twacapic.auth.TwitterAPI, 'request',
+                      autospec=True, side_effect=side_effects) as mocked_request_method:
+
+        group_with_minimal_config.collect()
+        assert mocked_request_method.call_count == 2
+
+        with open(f'{group_with_minimal_config.path}/group_config.yaml', 'r') as f:
+            config = yaml.safe_load(f)
+
+            assert config['expansions'] == {}
+            assert config['fields'] == {}
 
 
 def test_fields_in_tweets(user_group_with_tweets):

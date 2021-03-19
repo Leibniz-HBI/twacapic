@@ -17,6 +17,12 @@ def run():
                         Can be used to poll for new tweets of a group.\
                         Default: "users"',
                         default='users')
+    parser.add_argument(
+        '-c', '--group_config',
+        help='path to a custom group config file to define tweet data to be retrieved, \
+        e.g. retweets, mentioned users, attachments. \
+        A template named `group_config.yaml` can be found in any already created group folder.'
+    )
     args = parser.parse_args()
 
     print("Hello friend …")
