@@ -32,9 +32,9 @@ optional arguments:
                         can be found in any already created group folder.
 ```
 
-### Example
-
 At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name.
+
+### Example
 
 `twacapic -g USER_GROUP_NAME -u PATH_TO_USER_CSV`
 
