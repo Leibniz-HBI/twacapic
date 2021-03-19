@@ -30,6 +30,17 @@ def user_group():
     shutil.rmtree('results/test_users')
 
 
+@pytest.fixture
+def user_group_with_deleted_protected_accounts():
+
+    user_group = UserGroup('tests/mock_files/protected_nonexistent_users.csv',
+                           name='test_non_reachable_users')
+
+    yield user_group
+
+    shutil.rmtree('results/test_non_reachable_users')
+
+
 @pytest.fixture(scope='module')
 def user_group_with_tweets():
 
@@ -386,3 +397,7 @@ def test_expansions_in_tweets(user_group_with_tweets):
                 assert 'includes' in tweets
                 assert 'users' in tweets['includes']
                 assert 'tweets' in tweets['includes']
+
+def test_non_reachable_users(user_group_with_deleted_protected_accounts):
+
+    user_group_with_deleted_protected_accounts.collect()

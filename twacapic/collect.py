@@ -67,13 +67,28 @@ class UserGroup:
 
             response = api.request(f'users/:{user_id}/tweets', params)
 
-            # print(response.text)
+            print(response.text)
 
             assert response.status_code == 200
 
             tweets = json.loads(response.text)
 
+            if 'errors' in tweets:
+
+                if tweets['errors'][0]['type'] == "https://api.twitter.com/2/problems/resource-not-found":
+
+                    print(f"WARNING: User {tweets['errors'][0]['value']} not found.")
+
+                    return None
+
+                if tweets['errors'][0]['type'] == "https://api.twitter.com/2/problems/not-authorized-for-resource":
+
+                    print(f"WARNING: User {tweets['errors'][0]['value']} is protected.")
+
+                    return None
+
             if tweets['meta']['result_count'] == 0:
+
                 return None
 
             oldest_id = tweets['meta']['oldest_id']
