@@ -62,7 +62,7 @@ The group config is a yaml file in the following form:
 ```yaml
 fields:
   attachments: No
-  author_id: No
+  author_id: Yes
   context_annotations: No
   conversation_id: No
   created_at: No
@@ -80,7 +80,7 @@ fields:
   source: No
   withheld: No
 expansions:
-  author_id: No
+  author_id: Yes
   referenced_tweets.id: No
   in_reply_to_user_id: No
   attachments.media_keys: No
