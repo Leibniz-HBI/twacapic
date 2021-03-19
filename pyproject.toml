@@ -27,12 +27,18 @@ TwitterAPI = "^2.6.9"
 pytest = "^6.2.2"
 coverage = "^5.5"
 pytest-console-scripts = "^1.1.0"
-flake8 = "^3.9.0"
-autopep8 = "^1.5.6"
 pytest-timeout = "^1.4.2"
+python-language-server = {extras = ["all"], version = "^0.36.2"}
 
 [tool.poetry.scripts]
 twacapic = 'twacapic.main:run'
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--timeout=30"
+testpaths = [
+    "tests",
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
