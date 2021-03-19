@@ -14,7 +14,7 @@ Install via pip:
 
 ## Usage
 
-```
+```txt
 usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME] [-c GROUP_CONFIG]
 
 optional arguments:
@@ -53,7 +53,7 @@ Enjoy!
 
 The group config is a yaml file in the following form:
 
-```
+```yaml
 fields:
   attachments: No
   author_id: No
