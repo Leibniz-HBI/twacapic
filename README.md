@@ -15,17 +15,21 @@ Install via pip:
 ## Usage
 
 ```
-usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME]
+usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME] [-c GROUP_CONFIG]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USERLIST, --userlist USERLIST
-                        path to list of user IDs, one per line. Required for
-                        first run only. Can be used to add users to a group
+                        path to list of user IDs, one per line. Required for first run only. Can be
+                        used to add users to a group
   -g GROUPNAME, --groupname GROUPNAME
-                        name of the group to collect. Results will be saved in
-                        folder `results/GROUPNAME/`. Can be used to poll for
-                        new tweets of a group. Default: "users"
+                        name of the group to collect. Results will be saved in folder
+                        `results/GROUPNAME/`. Can be used to poll for new tweets of a group. Default:
+                        "users"
+  -c GROUP_CONFIG, --group_config GROUP_CONFIG
+                        path to a custom group config file to define tweet data to be retrieved, e.g.
+                        retweets, mentioned users, attachments. A template named `group_config.yaml`
+                        can be found in any already created group folder.
 ```
 
 ### Example
@@ -43,6 +47,47 @@ Afterwards you can poll for new tweets of a user group by running simply:
 `twacapic -g USER_GROUP_NAME`
 
 Enjoy!
+
+
+### Config Template
+
+The group config is a yaml file in the following form:
+
+```
+fields:
+  attachments: No
+  author_id: No
+  context_annotations: No
+  conversation_id: No
+  created_at: No
+  entities: No
+  geo: No
+  in_reply_to_user_id: No
+  lang: No
+  non_public_metrics: No
+  organic_metrics: No
+  possibly_sensitive: No
+  promoted_metrics: No
+  public_metrics: No
+  referenced_tweets: No
+  reply_settings: No
+  source: No
+  withheld: No
+expansions:
+  author_id: No
+  referenced_tweets.id: No
+  in_reply_to_user_id: No
+  attachments.media_keys: No
+  attachments.poll_ids: No
+  geo.place_id: No
+  entities.mentions.username: No
+  referenced_tweets.id.author_id: No
+```
+
+An explanation of the fields and expansions can be found in Twitter's API docs:
+
+  - [Fields](https://developer.twitter.com/en/docs/twitter-api/fields)
+  - [Expansions](https://developer.twitter.com/en/docs/twitter-api/expansions)
 
 
 ## Dev Install
