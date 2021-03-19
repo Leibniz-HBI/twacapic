@@ -1,0 +1,28 @@
+fields:
+  attachments: No
+  author_id: No
+  context_annotations: No
+  conversation_id: No
+  created_at: No
+  entities: No
+  geo: No
+  in_reply_to_user_id: No
+  lang: No
+  non_public_metrics: No
+  organic_metrics: No
+  possibly_sensitive: No
+  promoted_metrics: No
+  public_metrics: No
+  referenced_tweets: No
+  reply_settings: No
+  source: No
+  withheld: No
+expansions:
+  author_id: No
+  referenced_tweets.id: No
+  in_reply_to_user_id: No
+  attachments.media_keys: No
+  attachments.poll_ids: No
+  geo.place_id: No
+  entities.mentions.username: No
+  referenced_tweets.id.author_id: No

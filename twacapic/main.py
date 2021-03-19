@@ -35,12 +35,7 @@ def run():
 
         save_credentials('twitter_keys.yaml', consumer_key, consumer_secret)
 
-    try:
-        path = args.userlist
-    except IndexError:
-        path = None
-
-    user_group = UserGroup(path=path, name=args.groupname)
+    user_group = UserGroup(path=args.userlist, name=args.groupname, config=args.group_config)
     user_group.collect()
 
     print("Finished")

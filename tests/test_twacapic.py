@@ -139,11 +139,15 @@ def test_run(script_runner):
         'twacapic',
         '-g', 'test_run',
         '-u', 'tests/mock_files/users.csv',
-        '-c', 'twacapic/templates/group_config.yaml'
+        '-c', 'twacapic/templates/min_group_config.yaml'
     )
     assert ret.success
     assert ret.stderr == ''
     assert '36476777' in ret.stdout
+    with open('results/test_run/group_config.yaml') as f:
+        config = yaml.safe_load(f)
+        print(config)
+        assert not config['fields']['attachments']
     shutil.rmtree('results/test_run')
 
 
