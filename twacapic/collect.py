@@ -67,7 +67,7 @@ class UserGroup:
 
             response = api.request(f'users/:{user_id}/tweets', params)
 
-            print(response.text)
+            # print(response.text)
 
             assert response.status_code == 200
 
