@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import os
 
 from twacapic.auth import save_credentials
@@ -6,6 +7,8 @@ from twacapic.collect import UserGroup
 
 
 def run():
+
+    print(f"Started at {datetime.datetime.now()}")
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--userlist',
@@ -38,7 +41,7 @@ def run():
     user_group = UserGroup(path=args.userlist, name=args.groupname, config=args.group_config)
     user_group.collect()
 
-    print("Finished")
+    print(f"Finished at {datetime.datetime.now()}")
 
 
 if __name__ == '__main__':
