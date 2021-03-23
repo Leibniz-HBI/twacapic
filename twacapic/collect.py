@@ -75,16 +75,10 @@ class UserGroup:
 
             if 'errors' in tweets:
 
-                if tweets['errors'][0]['type'] == "https://api.twitter.com/2/problems/resource-not-found":
+                for error in tweets['errors']:
+                    print('WARNING: The following error occured:', error)
 
-                    print(f"WARNING: User {tweets['errors'][0]['value']} not found.")
-
-                    return None
-
-                if tweets['errors'][0]['type'] == "https://api.twitter.com/2/problems/not-authorized-for-resource":
-
-                    print(f"WARNING: User {tweets['errors'][0]['value']} is protected.")
-
+                if 'data' not in tweets:
                     return None
 
             if tweets['meta']['result_count'] == 0:
@@ -161,7 +155,11 @@ class UserGroup:
                     user_metadata = yaml.safe_load(metafile)
 
                 params['max_results'] = max_results_per_call
-                params['since_id'] = user_metadata['newest_id']
+
+                try:
+                    params['since_id'] = user_metadata['newest_id']
+                except KeyError:
+                    pass
 
                 collected_ids = self.request_tweets(api, user_id, params, get_all_pages=True)
 

@@ -17,7 +17,7 @@ from TwitterAPI.TwitterError import TwitterConnectionError
 
 
 def test_version():
-    assert __version__ == '0.3.2'
+    assert __version__ == '0.3.4'
 
 
 @pytest.fixture
@@ -398,6 +398,8 @@ def test_expansions_in_tweets(user_group_with_tweets):
                 assert 'users' in tweets['includes']
                 assert 'tweets' in tweets['includes']
 
+
 def test_non_reachable_users(user_group_with_deleted_protected_accounts):
 
     user_group_with_deleted_protected_accounts.collect()
+    user_group_with_deleted_protected_accounts.collect()  # check second time for errors because of missing metadata etc.
