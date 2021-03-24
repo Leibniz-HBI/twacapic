@@ -32,6 +32,8 @@ optional arguments:
                         can be found in any already created group folder.
   -l LOG_LEVEL, --log_level LOG_LEVEL
                         Level of output detail (DEBUG, INFO, WARNING, ERROR). Default: INFO
+  -lf LOG_FILE, --log_file LOG_FILE
+                        Path to logfile. Defaults to standard output.
 ```
 
 At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name.
