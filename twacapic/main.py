@@ -61,6 +61,8 @@ def run():
 
     logger.info(f"Finished collection of {args.groupname}.")
 
+    print("Exciting time in the world right now … exciting time … ")
+
 
 if __name__ == '__main__':
 
