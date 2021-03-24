@@ -33,7 +33,7 @@ def run():
     args = parser.parse_args()
 
     logger.add(sys.stdout, level=args.log_level)
-    logger.add(sys.stderr, level='WARNING')
+    logger.add(sys.stderr, level='ERROR')
     logger.add('errors.log', level='ERROR')
     logger.add('warnings.log', level='WARNING')
 

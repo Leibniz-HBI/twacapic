@@ -17,7 +17,6 @@ from twacapic.collect import UserGroup
 from TwitterAPI import TwitterResponse
 from TwitterAPI.TwitterError import TwitterConnectionError
 
-
 logger.add(sys.stdout, level='INFO')
 
 
