@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import sys
 from glob import glob
 from unittest.mock import Mock, patch
 
@@ -8,6 +9,7 @@ import pytest
 import twacapic
 import twacapic.templates
 import yaml
+from loguru import logger
 from requests.exceptions import ConnectionError
 from twacapic import __version__
 from twacapic.auth import read_credentials, save_credentials
@@ -16,8 +18,11 @@ from TwitterAPI import TwitterResponse
 from TwitterAPI.TwitterError import TwitterConnectionError
 
 
+logger.add(sys.stdout, level='INFO')
+
+
 def test_version():
-    assert __version__ == '0.3.6'
+    assert __version__ == '0.3.7'
 
 
 @pytest.fixture
@@ -145,19 +150,37 @@ def group_with_minimal_config(minimal_config_path):
     shutil.rmtree(user_group.path)
 
 
-def test_run(script_runner):
+@pytest.fixture
+def backup_logs():
+
+    logs = {'errors': False, 'warnings': False}
+    for entry in logs:
+        if os.path.isfile(f'{entry}.log'):
+            os.rename(f'{entry}.log', f'{entry}.log.bk')
+            logs[entry] = True
+
+    yield logs
+
+    for entry in logs:
+        if entry:
+            os.rename(f'{entry}.log.bk', f'{entry}.log')
+
+
+def test_run(script_runner, backup_logs):
+
     ret = script_runner.run(
         'twacapic',
         '-g', 'test_run',
         '-u', 'tests/mock_files/users.csv',
-        '-c', 'twacapic/templates/min_group_config.yaml'
+        '-c', 'twacapic/templates/min_group_config.yaml',
+        '-l', 'DEBUG'
     )
+
     assert ret.success
     assert ret.stderr == ''
     assert '36476777' in ret.stdout
     with open('results/test_run/group_config.yaml') as f:
         config = yaml.safe_load(f)
-        print(config)
         assert not config['fields']['attachments']
     shutil.rmtree('results/test_run')
 

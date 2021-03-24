@@ -6,8 +6,11 @@ from glob import glob
 
 import twacapic.templates
 import yaml
+from loguru import logger
 from twacapic.auth import get_api
 from TwitterAPI.TwitterError import TwitterConnectionError, TwitterRequestError
+
+logger.remove()
 
 
 class UserGroup:
@@ -67,7 +70,7 @@ class UserGroup:
 
             response = api.request(f'users/:{user_id}/tweets', params)
 
-            # print(response.text)
+            logger.debug(response.text)
 
             assert response.status_code == 200
 
@@ -75,15 +78,20 @@ class UserGroup:
 
             if 'errors' in tweets:
 
-                for error in tweets['errors']:
-                    print('WARNING: The following error occured:', error)
-
                 if 'data' not in tweets:
+                    logger.error(tweets["errors"])
                     return None
 
-            if tweets['meta']['result_count'] == 0:
+                for error in tweets['errors']:
+                    logger.warning(error)
 
+            result_count = tweets['meta']['result_count']
+
+            if result_count == 0:
+                logger.info(f'No new tweets found for {user_id}.')
                 return None
+            else:
+                logger.info(f'{result_count} tweets found for {user_id}')
 
             oldest_id = tweets['meta']['oldest_id']
             newest_id = tweets['meta']['newest_id']
@@ -130,7 +138,7 @@ class UserGroup:
             params['tweet.fields'] = ','.join(fields)
             params['expansions'] = ','.join(expansions)
 
-            print(f"Collecting tweets for user {user_id} …")
+            logger.info(f"Collecting tweets for user {user_id} …")
 
             meta_file_path = f'{self.path}/{user_id}/meta.yaml'
 
@@ -185,7 +193,7 @@ def retry(func):
 
             except (TwitterConnectionError, TwitterRequestError, AssertionError) as e:
 
-                print(e)
+                logger.warning(e)
 
                 if tries < max_tries:
 
@@ -194,10 +202,10 @@ def retry(func):
                     sleep_seconds = min(((tries * 2) ** 2), max(900 - total_sleep_seconds, 30))
                     total_sleep_seconds = total_sleep_seconds + sleep_seconds
                 else:
-                    print('Maximum retries reached. Raising Exception …')
+                    logger.exception('Maximum retries reached. Raising Exception …')
                     raise e
 
-                print(f"Retry in {sleep_seconds} seconds …")
+                logger.warning(f"Retry in {sleep_seconds} seconds …")
                 time.sleep(sleep_seconds)
                 continue
 

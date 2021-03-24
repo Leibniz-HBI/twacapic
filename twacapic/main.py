@@ -1,14 +1,13 @@
 import argparse
-import datetime
 import os
+import sys
 
+from loguru import logger
 from twacapic.auth import save_credentials
 from twacapic.collect import UserGroup
 
 
 def run():
-
-    print(f"Started at {datetime.datetime.now()}")
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--userlist',
@@ -26,22 +25,33 @@ def run():
         e.g. retweets, mentioned users, attachments. \
         A template named `group_config.yaml` can be found in any already created group folder.'
     )
+    parser.add_argument(
+        '-l', '--log_level',
+        help='Level of output detail (DEBUG, INFO, WARNING, ERROR). Default: INFO',
+        default='INFO'
+    )
     args = parser.parse_args()
+
+    logger.add(sys.stdout, level=args.log_level)
+    logger.add(sys.stderr, level='WARNING')
+    logger.add('errors.log', level='ERROR')
+    logger.add('warnings.log', level='WARNING')
 
     print("Hello friend …")
 
     if not os.path.isfile('twitter_keys.yaml'):
-        print("Please enter your API key:")
-        consumer_key = input()
-        print("Please enter your API secret:")
-        consumer_secret = input()
+        consumer_key = input("Please enter your API key:")
+        consumer_secret = input("Please enter your API secret:")
 
         save_credentials('twitter_keys.yaml', consumer_key, consumer_secret)
 
     user_group = UserGroup(path=args.userlist, name=args.groupname, config=args.group_config)
+
+    logger.info(f"Starting collection of {args.groupname}.")
+
     user_group.collect()
 
-    print(f"Finished at {datetime.datetime.now()}")
+    logger.info(f"Finished collection of {args.groupname}.")
 
 
 if __name__ == '__main__':
