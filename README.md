@@ -15,7 +15,7 @@ Install via pip:
 ## Usage
 
 ```txt
-usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME] [-c GROUP_CONFIG]
+usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME] [-c GROUP_CONFIG] [-l LOG_LEVEL]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -30,6 +30,8 @@ optional arguments:
                         path to a custom group config file to define tweet data to be retrieved, e.g.
                         retweets, mentioned users, attachments. A template named `group_config.yaml`
                         can be found in any already created group folder.
+  -l LOG_LEVEL, --log_level LOG_LEVEL
+                        Level of output detail (DEBUG, INFO, WARNING, ERROR). Default: INFO
 ```
 
 At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name.
