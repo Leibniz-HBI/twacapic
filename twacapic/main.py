@@ -62,9 +62,10 @@ def run():
 
         save_credentials('twitter_keys.yaml', consumer_key, consumer_secret)
 
-    user_group = UserGroup(path=args.userlist, name=args.groupname, config=args.group_config)
+    def one_run(userlist, groupname, config):
+        user_group = UserGroup(path=userlist, name=groupname,
+                               config=config)
 
-    def one_run():
         logger.info(f"Starting collection of {args.groupname}.")
 
         user_group.collect()
@@ -72,19 +73,19 @@ def run():
         logger.info(f"Finished collection of {args.groupname}.")
 
     if args.schedule is None:
-        one_run()
+        one_run(args.userlist, args.groupname, args.group_config)
     else:
         logger.info(f"Scheduling job for every {args.schedule} minutes")
-        schedule.every(int(args.schedule)).minutes.do(one_run)
+        schedule.every(int(args.schedule)).seconds.do(one_run, None, args.groupname, args.group_config)
         previous = overwrite('Wake up, samurai, we have work to do …', 0)
-        one_run()
+        one_run(args.userlist, args.groupname, args.group_config)
         while True:
             try:
                 previous = overwrite(
                     'The concept of waiting bewilders me. There are always deadlines.',
                     previous
                     )
-                time.sleep(60)
+                time.sleep(10)
                 previous = overwrite(
                     'Every day we change the world. It’s slow. It’s methodical. It’s exhausting.',
                     previous)
