@@ -15,25 +15,32 @@ Install via pip:
 ## Usage
 
 ```txt
-usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME] [-c GROUP_CONFIG] [-l LOG_LEVEL]
+usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME] [-c GROUP_CONFIG]
+                [-l LOG_LEVEL] [-lf LOG_FILE] [-s SCHEDULE]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USERLIST, --userlist USERLIST
-                        path to list of user IDs, one per line. Required for first run only. Can be
-                        used to add users to a group
+                        Path to list of user IDs, one per line. Required for
+                        first run only. Can be used to add users to a group.
   -g GROUPNAME, --groupname GROUPNAME
-                        name of the group to collect. Results will be saved in folder
-                        `results/GROUPNAME/`. Can be used to poll for new tweets of a group. Default:
-                        "users"
+                        Name of the group to collect. Results will be saved in
+                        folder `results/GROUPNAME/`. Can be used to poll for
+                        new tweets of a group. Default: "users"
   -c GROUP_CONFIG, --group_config GROUP_CONFIG
-                        path to a custom group config file to define tweet data to be retrieved, e.g.
-                        retweets, mentioned users, attachments. A template named `group_config.yaml`
-                        can be found in any already created group folder.
+                        Path to a custom group config file to define tweet
+                        data to be retrieved, e.g. retweets, mentioned users,
+                        attachments. A template named `group_config.yaml` can
+                        be found in any already created group folder.
   -l LOG_LEVEL, --log_level LOG_LEVEL
-                        Level of output detail (DEBUG, INFO, WARNING, ERROR). Default: INFO
+                        Level of output detail (DEBUG, INFO, WARNING, ERROR).
+                        Warnings and Errors are always logged in respective
+                        log-files `errors.log` and `warnings.log`. Default:
+                        ERROR
   -lf LOG_FILE, --log_file LOG_FILE
                         Path to logfile. Defaults to standard output.
+  -s SCHEDULE, --schedule SCHEDULE
+                        If given, repeat every SCHEDULE minutes.
 ```
 
 At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name.
