@@ -6,6 +6,7 @@ from loguru import logger
 from twacapic.auth import save_credentials
 from twacapic.collect import UserGroup
 
+logger.remove()
 
 def run():
 
@@ -30,10 +31,17 @@ def run():
         help='Level of output detail (DEBUG, INFO, WARNING, ERROR). Default: INFO',
         default='INFO'
     )
+    parser.add_argument(
+        '-lf', '--log_file',
+        help='Path to logfile. Defaults to standard output.',
+    )
     args = parser.parse_args()
 
-    logger.add(sys.stdout, level=args.log_level)
-    logger.add(sys.stderr, level='ERROR')
+    if args.log_file is None:
+        logger.add(sys.stdout, level=args.log_level)
+    else:
+        logger.add(args.log_file, level=args.log_level, rotation="64 MB")
+        logger.add(sys.stderr, level='ERROR')
     logger.add('errors.log', level='ERROR')
     logger.add('warnings.log', level='WARNING')
 
