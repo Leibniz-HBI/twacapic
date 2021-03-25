@@ -85,10 +85,9 @@ class UserGroup:
                 logger.error(tweets["errors"])
 
                 if tweets['errors'][0]['title'] == 'Not Found Error':
-                    logger.info('here')
                     shutil.copytree(Path.cwd()/'results'/self.name/user_id,
                                     Path.cwd()/'results'/f'deleted_{self.name}'/user_id,
-                                    dirs_exist_ok=True
+                                    # dirs_exist_ok=True
                                     )
                     shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
                 elif tweets['errors'][0]['title'] == 'Forbidden':
