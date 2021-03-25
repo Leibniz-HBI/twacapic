@@ -2,7 +2,9 @@
 
 Twitter Academic API Client
 
-In development. Expect breaking changes and destructive bugs when updating to the latest version.
+In development. Expect breaking changes and bugs when updating to the latest version.
+
+Tested on Linux (Ubuntu 20.10, Python 3.8) and MacOS 11 (Python 3.9). Please [raise an issue](https://github.com/Leibniz-HBI/twacapic/issues) if you need to install it with another Python version or encounter issues with other operating systems.
 
 
 ## Installation
