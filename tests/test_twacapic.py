@@ -428,8 +428,9 @@ def test_expansions_in_tweets(user_group_with_tweets):
 def test_non_reachable_users(user_group_with_deleted_protected_accounts):
 
     user_group_with_deleted_protected_accounts.collect()
+    print(user_group_with_deleted_protected_accounts.user_ids)
 
-    assert os.listdir(user_group_with_deleted_protected_accounts.path) == []
+    assert os.listdir(user_group_with_deleted_protected_accounts.path) == ['group_config.yaml']
 
     user_group_with_deleted_protected_accounts.collect()  # check second time for errors because of missing metadata etc.
 

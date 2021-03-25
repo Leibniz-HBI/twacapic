@@ -87,7 +87,7 @@ class UserGroup:
                 if tweets['errors'][0]['title'] == 'Not Found Error':
                     shutil.copytree(Path.cwd()/'results'/self.name/user_id,
                                     Path.cwd()/'results'/f'deleted_{self.name}'/user_id,
-                                    # dirs_exist_ok=True
+                                    dirs_exist_ok=True
                                     )
                     shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
                 elif tweets['errors'][0]['title'] == 'Forbidden':
@@ -161,7 +161,10 @@ class UserGroup:
             expansion for expansion in expansions_config if expansions_config[expansion]
         ]
 
-        for user_id in self.user_ids:
+        iterlist = self.user_ids.copy()
+        # copy needed because self.user_ids changes during iteration … what a bedbug …
+
+        for user_id in iterlist:
 
             params = {}
             params['tweet.fields'] = ','.join(fields)
