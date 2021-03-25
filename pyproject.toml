@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "twacapic"
-version = "0.5.4"
+version = "0.5.5"
 description = "A Twitter Academic API Client"
 authors = ["Felix Victor Münch <f.muench@leibniz-hbi.de>"]
 license = "MIT"
@@ -22,7 +22,7 @@ exclude = [
 python = "^3.8"
 PyYAML = "^5.4.1"
 TwitterAPI = "^2.6.9"
-loguru = "^0.5.4"
+loguru = "^0.5.3"
 schedule = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
