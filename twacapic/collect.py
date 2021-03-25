@@ -110,7 +110,7 @@ class UserGroup:
 
                 return None
 
-            elif 'errors' in tweets:
+            if 'errors' in tweets and 'data' in tweets:
 
                 for error in tweets['errors']:
                     logger.warning(error)
