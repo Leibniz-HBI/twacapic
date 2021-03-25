@@ -3,6 +3,7 @@ import os
 import shutil
 import time
 from glob import glob
+from pathlib import Path
 
 import twacapic.templates
 import yaml
@@ -70,17 +71,46 @@ class UserGroup:
 
             response = api.request(f'users/:{user_id}/tweets', params)
 
-            logger.debug(response.text)
-
-            assert response.status_code == 200
+            try:
+                assert response.status_code == 200
+                logger.debug(response.text)
+            except AssertionError as e:
+                logger.warning(response.text)
+                raise e
 
             tweets = json.loads(response.text)
 
-            if 'errors' in tweets:
+            if 'errors' in tweets and 'data' not in tweets:
 
-                if 'data' not in tweets:
-                    logger.error(tweets["errors"])
-                    return None
+                logger.error(tweets["errors"])
+
+                if tweets['errors'][0]['title'] == 'Not Found Error':
+                    logger.info('here')
+                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
+                                    Path.cwd()/'results'/f'deleted_{self.name}'/user_id,
+                                    dirs_exist_ok=True
+                                    )
+                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
+                elif tweets['errors'][0]['title'] == 'Forbidden':
+                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
+                                    Path.cwd()/'results'/f'suspended_{self.name}'/user_id,
+                                    dirs_exist_ok=True
+                                    )
+                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
+                elif tweets['errors'][0]['title'] == 'Authorization Error':
+                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
+                                    Path.cwd()/'results'/f'protected_{self.name}'/user_id,
+                                    dirs_exist_ok=True
+                                    )
+                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
+                else:
+                    raise TwitterRequestError(200, f"{tweets['errors']}")
+
+                self.user_ids.remove(user_id)
+
+                return None
+
+            elif 'errors' in tweets:
 
                 for error in tweets['errors']:
                     logger.warning(error)
@@ -154,8 +184,8 @@ class UserGroup:
                     user_metadata['newest_id'] = newest_id
                     user_metadata['oldest_id'] = oldest_id
 
-                with open(meta_file_path, 'w') as metafile:
-                    yaml.dump(user_metadata, metafile)
+                    with open(meta_file_path, 'w') as metafile:
+                        yaml.dump(user_metadata, metafile)
 
             else:
 

@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 from glob import glob
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
@@ -42,7 +43,10 @@ def user_group_with_deleted_protected_accounts():
 
     yield user_group
 
-    shutil.rmtree('results/test_non_reachable_users')
+    # shutil.rmtree(Path.cwd()/'results'/'test_non_reachable_users')
+    # shutil.rmtree(Path.cwd()/'results'/'deleted_test_non_reachable_users')
+    # shutil.rmtree(Path.cwd()/'results'/'protected_test_non_reachable_users')
+    # shutil.rmtree(Path.cwd()/'results'/'suspended_test_non_reachable_users')
 
 
 @pytest.fixture(scope='module')
@@ -425,3 +429,8 @@ def test_non_reachable_users(user_group_with_deleted_protected_accounts):
 
     user_group_with_deleted_protected_accounts.collect()
     user_group_with_deleted_protected_accounts.collect()  # check second time for errors because of missing metadata etc.
+
+    assert (Path.cwd()/'results'/'test_non_reachable_users').is_dir()
+    assert (Path.cwd()/'results'/'deleted_test_non_reachable_users').is_dir()
+    assert (Path.cwd()/'results'/'protected_test_non_reachable_users').is_dir()
+    assert (Path.cwd()/'results'/'suspended_test_non_reachable_users').is_dir()
