@@ -22,7 +22,7 @@ logger.add(sys.stdout, level='INFO')
 
 
 def test_version():
-    assert __version__ == '0.5.2'
+    assert __version__ == '0.5.3'
 
 
 @pytest.fixture
