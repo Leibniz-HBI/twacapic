@@ -82,11 +82,19 @@ def run(recipient='f.muench@gmail.com', subject='testing wrapper'):
     if args.schedule is None:
         one_run(args.userlist, args.groupname, args.group_config)
     else:
+
+        if args.notify is not None:
+            send_mail(args.notify, 'Hello friend …',
+                      f'Notifications from {socket.gethostname()} work as expected.')
+
         logger.info(f"Scheduling job for every {args.schedule} minutes")
         schedule.every(int(args.schedule)).minutes.do(
             one_run, None, args.groupname, args.group_config)
+
         previous = overwrite('Wake up, samurai, we have work to do …', 0)
+
         one_run(args.userlist, args.groupname, args.group_config)
+
         while True:
             try:
 
