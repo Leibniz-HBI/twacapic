@@ -24,6 +24,7 @@ PyYAML = "^5.4.1"
 TwitterAPI = "^2.6.9"
 loguru = "^0.5.3"
 schedule = "^1.0.0"
+yagmail = "^0.14.245"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"

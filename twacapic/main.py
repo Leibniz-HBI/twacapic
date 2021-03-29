@@ -1,5 +1,6 @@
 import argparse
 import os
+import socket
 import sys
 import time
 
@@ -7,11 +8,12 @@ import schedule
 from loguru import logger
 from twacapic.auth import save_credentials
 from twacapic.collect import UserGroup
+from twacapic.notifications import send_mail
 
 logger.remove()
 
 
-def run():
+def run(recipient='f.muench@gmail.com', subject='testing wrapper'):
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--userlist',
@@ -44,6 +46,11 @@ def run():
         '-s', '--schedule',
         help='If given, repeat every SCHEDULE minutes.'
     )
+    parser.add_argument(
+        '-n', '--notify',
+        help='If given, notify email address in case of unexpected errors. Needs further setup. See README.'
+    )
+
     args = parser.parse_args()
 
     if args.log_file is None:
@@ -76,20 +83,41 @@ def run():
         one_run(args.userlist, args.groupname, args.group_config)
     else:
         logger.info(f"Scheduling job for every {args.schedule} minutes")
-        schedule.every(int(args.schedule)).minutes.do(one_run, None, args.groupname, args.group_config)
+        schedule.every(int(args.schedule)).minutes.do(
+            one_run, None, args.groupname, args.group_config)
         previous = overwrite('Wake up, samurai, we have work to do …', 0)
         one_run(args.userlist, args.groupname, args.group_config)
         while True:
             try:
+
                 previous = overwrite(
                     'The concept of waiting bewilders me. There are always deadlines.',
                     previous
-                    )
+                )
+
                 time.sleep(20)
+
                 previous = overwrite(
                     'Every day we change the world. It’s slow. It’s methodical. It’s exhausting.',
                     previous)
-                schedule.run_pending()
+
+                try:
+
+                    schedule.run_pending()
+
+                except Exception as e:
+
+                    if args.notify is not None:
+
+                        logger.error(e)
+
+                        send_mail(args.notify,
+                                  f'Unexpected Error on {socket.gethostname()}',
+                                  str(e)
+                                  )
+                    else:
+                        raise
+
             except KeyboardInterrupt:
                 logger.info("KeyboardInterrupt received. Stopping collection.")
                 break
