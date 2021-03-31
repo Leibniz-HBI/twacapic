@@ -6,13 +6,11 @@ In development. Expect breaking changes and bugs when updating to the latest ver
 
 Tested on Linux (Ubuntu 20.10, Python 3.8) and MacOS 11 (Python 3.9). Please [raise an issue](https://github.com/Leibniz-HBI/twacapic/issues) if you need to install it with another Python version or encounter issues with other operating systems.
 
-
 ## Installation
 
 Install via pip:
 
 `pip install twacapic`
-
 
 ## Usage
 
@@ -70,7 +68,6 @@ Afterwards you can poll for new tweets of a user group by running simply:
 
 Enjoy!
 
-
 ### Config Template
 
 The group config is a yaml file in the following form:
@@ -108,9 +105,18 @@ expansions:
 
 An explanation of the fields and expansions can be found in Twitter's API docs:
 
-  - [Fields](https://developer.twitter.com/en/docs/twitter-api/fields)
-  - [Expansions](https://developer.twitter.com/en/docs/twitter-api/expansions)
+- [Fields](https://developer.twitter.com/en/docs/twitter-api/fields)
+- [Expansions](https://developer.twitter.com/en/docs/twitter-api/expansions)
 
+## Ensure that twacapic is continuously running, even after restart
+
+If your system can run cronjobs, stop twacapic, run `crontab -e` and add the following to your crontab:
+
+```cron
+*/15 * * * *    cd PATH/TO/YOUR/TWACAPIC/WORKING/DIRECTORY && flock -n lock.file twacapic [YOUR ARGUMENTS HERE]
+```
+
+This will check every 15 minutes whether twacapic is running (via the lock file), and if not, start it with your arguments.
 
 ## Dev Install
 
