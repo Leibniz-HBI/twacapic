@@ -8,9 +8,14 @@ Tested on Linux (Ubuntu 20.10, Python 3.8) and MacOS 11 (Python 3.9). Please [ra
 
 ## Installation
 
-Install via pip:
+Consider installlation via [pipx](https://pipxproject.github.io/pipx/) if you just want to use twacapic as a command line tool:
 
-`pip install twacapic`
+1. If you like pipx, [install pipx](https://pipxproject.github.io/pipx/installation/)
+2. run `pipx install twacapic`
+
+Or, simply install via pip:
+
+`pip install twacapic` or `pip3 install twacapic`
 
 ## Usage
 
