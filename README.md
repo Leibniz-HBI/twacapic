@@ -8,7 +8,7 @@ Tested on Linux (Ubuntu 20.10, Python 3.8) and MacOS 11 (Python 3.9). Please [ra
 
 ## Why another Twitter API client?
 
-It is/will be more of a Twitter API client convenience wrapper that automates common tasks (e.g. get all tweets by a list of users and poll for new tweets regularly). That means, it actually makes use of existing API clients.
+It is/will be more of a Twitter API client convenience wrapper that automates common tasks (e.g. get all tweets by a list of users and poll for new tweets regularly or get all tweets about an ongoing event based on keywords). That means, it actually makes use of existing API clients.
 
 ## Installation
 
