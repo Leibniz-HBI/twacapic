@@ -13,7 +13,7 @@ from twacapic.notifications import send_mail
 logger.remove()
 
 
-def run(recipient='f.muench@gmail.com', subject='testing wrapper'):
+def run():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--userlist',
