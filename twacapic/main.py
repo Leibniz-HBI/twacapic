@@ -54,7 +54,7 @@ def run():
 
     args = parser.parse_args()
 
-    if len(args.userlist) > 0:
+    if args.userlist is not None:
         assert len(args.userlist) == len(args.groupname), 'Not all userlist paths have been defined.'
 
     if args.log_file is None:
@@ -75,7 +75,7 @@ def run():
 
     def one_run(userlist, groupname, config):
 
-        if len(userlist) == 0:
+        if userlist is None:
             userlist = [None] * len(groupname)
 
         userlists_and_groupnames = tuple(zip(userlist, groupname))
