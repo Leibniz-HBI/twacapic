@@ -202,11 +202,28 @@ def test_run_2_lists(script_runner, backup_logs):
     assert ret.stderr == ''
     assert '36476777' in ret.stdout
     assert '1349149096909668363' in ret.stdout
-    with open('results/test_run/group_config.yaml') as f:
+    with open('results/test_run_2_lists/group_config.yaml') as f:
+        config = yaml.safe_load(f)
+        assert not config['fields']['attachments']
+    with open('results/test_run_2_lists_2/group_config.yaml') as f:
         config = yaml.safe_load(f)
         assert not config['fields']['attachments']
     shutil.rmtree('results/test_run_2_lists')
     shutil.rmtree('results/test_run_2_lists_2')
+
+
+def test_run_2_lists_not_enough_paths(script_runner, backup_logs):
+
+    ret = script_runner.run(
+        'twacapic',
+        '-g', 'test_run_2_lists', 'test_run_2_lists_2',
+        '-u', 'tests/mock_files/users2.csv',
+        '-c', 'twacapic/templates/min_group_config.yaml',
+        '-l', 'DEBUG'
+    )
+
+    assert not ret.success
+    assert 'AssertionError' in ret.stderr
 
 
 def test_can_create_credential_yaml(tmp_path):
