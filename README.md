@@ -53,11 +53,11 @@ optional arguments:
 
 At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name or if the `-s` argument is given.
 
-Email notifications with the `-n` argument use [yagmail](https://pypi.org/project/yagmail/) and necessitate a file named `gmail_creds.py` in the format:
+Email notifications with the `-n` argument use [yagmail](https://pypi.org/project/yagmail/) and necessitate a file named `gmail_creds.yaml` in the working directory in the following format:
 
-```Python
-gmail_user = 'a_gmail_user_name'
-gmail_password = 'an_app_password_for_this_user_name'
+```yaml
+gmail_user: a_gmail_user_name
+gmail_password: an_app_password_for_this_user_name
 ```
 
 As this is inherently insecure, we recommend to create a new Gmail account that is used for this purpose only, until we have the time to implement a more secure solution.
