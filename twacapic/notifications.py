@@ -2,7 +2,10 @@ from pathlib import Path
 from loguru import logger
 
 import yagmail
-import gmail_creds
+try:
+    import gmail_creds
+except ModuleNotFoundError:
+    logger.warning('No credentials found for Gmail. No notifications will be sent.')
 
 
 def send_mail(recipient, subject, content):
