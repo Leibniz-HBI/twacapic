@@ -85,11 +85,11 @@ def run():
             user_group = UserGroup(path=userlist, name=groupname,
                                    config=config)
 
-            logger.info(f"Starting collection of {args.groupname}.")
+            logger.info(f"Starting collection of {groupname}.")
 
             user_group.collect()
 
-            logger.info(f"Finished collection of {args.groupname}.")
+            logger.info(f"Finished collection of {groupname}.")
 
     if args.schedule is None:
         one_run(args.userlist, args.groupname, args.group_config)
