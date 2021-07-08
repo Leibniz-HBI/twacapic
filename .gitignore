@@ -145,4 +145,4 @@ results
 .vscode/
 users.csv
 *gmail_creds.json*
-gmail_creds.py
+gmail_creds.yaml
