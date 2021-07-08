@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "twacapic"
-version = "0.7.3"
+version = "0.7.4"
 description = "A Twitter Academic API Client"
 authors = ["Felix Victor Münch <f.muench@leibniz-hbi.de>"]
 license = "MIT"
