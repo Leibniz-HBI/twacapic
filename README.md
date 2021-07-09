@@ -24,38 +24,43 @@ Or, simply install via pip:
 ## Usage
 
 ```txt
-usage: twacapic [-h] [-u USERLIST] [-g GROUPNAME] [-c GROUP_CONFIG] [-l LOG_LEVEL] [-lf LOG_FILE]
+usage: twacapic [-h] [-u [USERLIST ...]] [-g GROUPNAME [GROUPNAME ...]] [-c GROUP_CONFIG] [-l LOG_LEVEL] [-lf LOG_FILE]
                 [-s SCHEDULE] [-n NOTIFY]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u USERLIST, --userlist USERLIST
-                        Path to list of user IDs, one per line. Required for first run only. Can be
-                        used to add users to a group.
-  -g GROUPNAME, --groupname GROUPNAME
-                        Name of the group to collect. Results will be saved in folder
-                        `results/GROUPNAME/`. Can be used to poll for new tweets of a group. Default:
-                        "users"
+  -u [USERLIST ...], --userlist [USERLIST ...]
+                        Path(s) to list(s) of user IDs, (format: one ID per line). Required for first run only. Same
+                        number and corresponding order required as in --groupname argument. Can be used to add users to
+                        a group.
+  -g GROUPNAME [GROUPNAME ...], --groupname GROUPNAME [GROUPNAME ...]
+                        Name(s) of the group(s) to collect. Results will be saved in folder `results/GROUPNAME/`. Can
+                        be used to poll for new tweets of a group. Default: "users"
   -c GROUP_CONFIG, --group_config GROUP_CONFIG
-                        Path to a custom group config file to define tweet data to be retrieved, e.g.
-                        retweets, mentioned users, attachments. A template named `group_config.yaml`
-                        can be found in any already created group folder.
+                        Path to a custom group config file to define tweet data to be retrieved, e.g. retweets,
+                        mentioned users, attachments. A template named `group_config.yaml` can be found in any already
+                        created group folder.
   -l LOG_LEVEL, --log_level LOG_LEVEL
-                        Level of output detail (DEBUG, INFO, WARNING, ERROR). Warnings and Errors are
-                        always logged in respective log-files `errors.log` and `warnings.log`.
-                        Default: ERROR
+                        Level of output detail (DEBUG, INFO, WARNING, ERROR). Warnings and Errors are always logged in
+                        respective log-files `errors.log` and `warnings.log`. Default: ERROR
   -lf LOG_FILE, --log_file LOG_FILE
                         Path to logfile. Defaults to standard output.
   -s SCHEDULE, --schedule SCHEDULE
                         If given, repeat every SCHEDULE minutes.
   -n NOTIFY, --notify NOTIFY
-                        If given, notify email address in case of unexpected errors. Needs further
-                        setup. See README.
+                        If given, notify email address in case of unexpected errors. Needs further setup. See README.
 ```
 
 At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name or if the `-s` argument is given.
 
-Email notifications with the `-n` argument use the OAuth2 procedure of yagmail and necessitate an OAuth2 procedure to give access to a Gmail account as described in  its [README](https://github.com/kootenpv/yagmail#oauth2)
+Email notifications with the `-n` argument use [yagmail](https://pypi.org/project/yagmail/) and necessitate a file named `gmail_creds.yaml` in the working directory in the following format:
+
+```yaml
+gmail_user: a_gmail_user_name
+gmail_password: an_app_password_for_this_user_name
+```
+
+As this is inherently insecure, we recommend to create a new Gmail account that is used for this purpose only, until we have the time to implement a more secure solution.
 
 ### Authorisation with the Twitter API
 

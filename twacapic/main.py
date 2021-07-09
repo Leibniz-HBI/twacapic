@@ -16,11 +16,12 @@ logger.remove()
 def run():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--userlist',
-                        help='Path to list of user IDs, one per line. \
-                        Required for first run only. Can be used to add users to a group.')
-    parser.add_argument('-g', '--groupname',
-                        help='Name of the group to collect.\
+    parser.add_argument('-u', '--userlist', nargs='*',
+                        help='Path(s) to list(s) of user IDs, (format: one ID per line). \
+                        Required for first run only. Same number and corresponding order required as in --groupname argument. \
+                        Can be used to add users to a group.')
+    parser.add_argument('-g', '--groupname', nargs='+',
+                        help='Name(s) of the group(s) to collect.\
                         Results will be saved in folder `results/GROUPNAME/`.\
                         Can be used to poll for new tweets of a group.\
                         Default: "users"',
@@ -53,6 +54,9 @@ def run():
 
     args = parser.parse_args()
 
+    if args.userlist is not None:
+        assert len(args.userlist) == len(args.groupname), 'Not all userlist paths have been defined.'
+
     if args.log_file is None:
         logger.add(sys.stdout, level=args.log_level)
     else:
@@ -70,14 +74,22 @@ def run():
         save_credentials('twitter_keys.yaml', consumer_key, consumer_secret)
 
     def one_run(userlist, groupname, config):
-        user_group = UserGroup(path=userlist, name=groupname,
-                               config=config)
 
-        logger.info(f"Starting collection of {args.groupname}.")
+        if userlist is None:
+            userlist = [None] * len(groupname)
 
-        user_group.collect()
+        userlists_and_groupnames = tuple(zip(userlist, groupname))
 
-        logger.info(f"Finished collection of {args.groupname}.")
+        for userlist, groupname in userlists_and_groupnames:
+
+            user_group = UserGroup(path=userlist, name=groupname,
+                                   config=config)
+
+            logger.info(f"Starting collection of {groupname}.")
+
+            user_group.collect()
+
+            logger.info(f"Finished collection of {groupname}.")
 
     if args.schedule is None:
         one_run(args.userlist, args.groupname, args.group_config)

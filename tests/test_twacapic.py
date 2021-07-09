@@ -22,7 +22,7 @@ logger.add(sys.stdout, level='INFO')
 
 
 def test_version():
-    assert __version__ == '0.6.0'
+    assert __version__ == '0.7.4'
 
 
 @pytest.fixture
@@ -186,6 +186,62 @@ def test_run(script_runner, backup_logs):
         config = yaml.safe_load(f)
         assert not config['fields']['attachments']
     shutil.rmtree('results/test_run')
+
+
+def test_run_2_lists(script_runner, backup_logs):
+
+    ret = script_runner.run(
+        'twacapic',
+        '-g', 'test_run_2_lists', 'test_run_2_lists_2',
+        '-u', 'tests/mock_files/users.csv', 'tests/mock_files/users2.csv',
+        '-c', 'twacapic/templates/min_group_config.yaml',
+        '-l', 'DEBUG'
+    )
+
+    assert ret.success
+    assert ret.stderr == ''
+    assert '36476777' in ret.stdout
+    assert '1349149096909668363' in ret.stdout
+    with open('results/test_run_2_lists/group_config.yaml') as f:
+        config = yaml.safe_load(f)
+        assert not config['fields']['attachments']
+    with open('results/test_run_2_lists_2/group_config.yaml') as f:
+        config = yaml.safe_load(f)
+        assert not config['fields']['attachments']
+
+    ret2 = script_runner.run(
+        'twacapic',
+        '-g', 'test_run_2_lists', 'test_run_2_lists_2',
+        '-l', 'DEBUG'
+    )
+
+    assert ret2.success
+    assert ret2.stderr == ''
+    assert '36476777' in ret2.stdout
+    assert '1349149096909668363' in ret2.stdout
+    with open('results/test_run_2_lists/group_config.yaml') as f:
+        config = yaml.safe_load(f)
+        assert not config['fields']['attachments']
+    with open('results/test_run_2_lists_2/group_config.yaml') as f:
+        config = yaml.safe_load(f)
+        assert not config['fields']['attachments']
+
+    shutil.rmtree('results/test_run_2_lists')
+    shutil.rmtree('results/test_run_2_lists_2')
+
+
+def test_run_2_lists_not_enough_paths(script_runner, backup_logs):
+
+    ret = script_runner.run(
+        'twacapic',
+        '-g', 'test_run_2_lists', 'test_run_2_lists_2',
+        '-u', 'tests/mock_files/users2.csv',
+        '-c', 'twacapic/templates/min_group_config.yaml',
+        '-l', 'DEBUG'
+    )
+
+    assert not ret.success
+    assert 'AssertionError' in ret.stderr
 
 
 def test_can_create_credential_yaml(tmp_path):
