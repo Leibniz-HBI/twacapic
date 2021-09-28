@@ -117,7 +117,45 @@ def successful_response_mock(user_group_with_tweets):
 
 
 @pytest.fixture(scope='module')
-def failed_response_mock(user_group_with_tweets):
+def successful_response_mock_with_next_token(user_group_with_tweets):
+
+    tweet_file = glob(f'{user_group_with_tweets.path}/*/*.json')[0]
+
+    mock_response = Mock()
+    options = Mock()
+    mock_response.status_code = 200
+    with open(tweet_file, 'r') as tweets:
+        mock_response.text = tweets.read()
+
+    text = json.loads(mock_response.text)
+
+    text['meta']['next_token'] = 'mock_tocken'
+
+    mock_response.text = json.dumps(text)
+
+    yield TwitterResponse(mock_response, options)
+
+
+@pytest.fixture(scope='module')
+def successful_empty_response_mock():
+
+    mock_response = Mock()
+    options = Mock()
+    mock_response.status_code = 200
+
+    mock_response.text = '''
+        {
+            "meta": {
+                "result_count": 0
+            }
+        }
+        '''
+
+    yield TwitterResponse(mock_response, options)
+
+
+@pytest.fixture(scope='module')
+def failed_response_mock():
 
     mock_response = Mock()
     options = Mock()
@@ -352,6 +390,20 @@ def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
         assert len(tweet_files) == 2
         assert meta_new[user_id]['newest_id'] == latest_tweet_id
         assert meta_new[user_id]['oldest_id'] == meta_old[user_id]['oldest_id']
+
+
+def test_pagination_if_page_has_zero_results(user_group_with_old_meta_file, successful_response_mock_with_next_token, successful_empty_response_mock):
+
+    side_effects = [
+        successful_response_mock_with_next_token,  # success page 1
+        successful_empty_response_mock,  # empty page 2
+    ] * 3
+
+    with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
+                      side_effect=side_effects) as mocked_request_method:
+
+        user_group_with_old_meta_file.collect()
+        assert mocked_request_method.call_count == 2
 
 
 def test_twitter_connection_error(user_group, successful_response_mock):
