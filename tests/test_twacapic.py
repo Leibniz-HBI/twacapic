@@ -394,16 +394,18 @@ def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
 
 def test_pagination_if_page_has_zero_results(user_group_with_old_meta_file, successful_response_mock_with_next_token, successful_empty_response_mock):
 
+    number_of_users = len(user_group_with_old_meta_file.user_ids)
+
     side_effects = [
         successful_response_mock_with_next_token,  # success page 1
         successful_empty_response_mock,  # empty page 2
-    ] * 3
+    ] * number_of_users
 
     with patch.object(twacapic.auth.TwitterAPI, 'request', autospec=True,
                       side_effect=side_effects) as mocked_request_method:
 
         user_group_with_old_meta_file.collect()
-        assert mocked_request_method.call_count == 2
+        assert mocked_request_method.call_count == 2 * number_of_users
 
 
 def test_twitter_connection_error(user_group, successful_response_mock):

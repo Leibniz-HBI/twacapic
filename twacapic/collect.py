@@ -141,7 +141,12 @@ class UserGroup:
 
                 params['pagination_token'] = tweets['meta']['next_token']
 
-                oldest_id, new_newest_id, tweets = get_page(params)
+                next_page = get_page(params)
+
+                if next_page is not None:
+                    oldest_id, new_newest_id, tweets = next_page
+                else:
+                    break
 
         return oldest_id, newest_id
 
