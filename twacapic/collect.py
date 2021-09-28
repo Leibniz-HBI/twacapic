@@ -116,7 +116,7 @@ class UserGroup:
 
             result_count = tweets['meta']['result_count']
 
-            if result_count == 0:
+            if result_count == 0 and 'next_token' not in tweets['meta']:
                 logger.info(f'No new tweets found for {user_id}.')
                 return None
             else:
