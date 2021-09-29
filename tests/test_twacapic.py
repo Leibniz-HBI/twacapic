@@ -22,7 +22,7 @@ logger.add(sys.stdout, level='INFO')
 
 
 def test_version():
-    assert __version__ == '0.7.4'
+    assert __version__ == '0.7.5'
 
 
 @pytest.fixture
@@ -392,7 +392,9 @@ def test_pagination_of_old_tweets(user_group_with_very_old_tweets):
         assert meta_new[user_id]['oldest_id'] == meta_old[user_id]['oldest_id']
 
 
-def test_pagination_if_page_has_zero_results(user_group_with_old_meta_file, successful_response_mock_with_next_token, successful_empty_response_mock):
+def test_pagination_if_page_has_zero_results(user_group_with_old_meta_file,
+                                             successful_response_mock_with_next_token,
+                                             successful_empty_response_mock):
 
     number_of_users = len(user_group_with_old_meta_file.user_ids)
 
