@@ -46,7 +46,7 @@ def user_group_with_deleted_protected_accounts():
     yield user_group
 
     shutil.rmtree(Path.cwd()/'results'/'test_non_reachable_users')
-    shutil.rmtree(Path.cwd()/'results'/'deleted_test_non_reachable_users')
+    # shutil.rmtree(Path.cwd()/'results'/'deleted_test_non_reachable_users')
     # shutil.rmtree(Path.cwd()/'results'/'protected_test_non_reachable_users')
     # shutil.rmtree(Path.cwd()/'results'/'suspended_test_non_reachable_users')
 
