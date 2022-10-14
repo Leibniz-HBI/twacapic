@@ -539,7 +539,7 @@ def test_expansions_in_tweets(user_group_with_tweets):
                 assert 'tweets' in tweets['includes']
 
 
-def test_non_reachable_users(user_group_with_deleted_protected_accounts: UserGroup):
+def test_non_reachable_users(user_group_with_deleted_protected_accounts):
 
     user_group_with_deleted_protected_accounts.collect()
     print(user_group_with_deleted_protected_accounts.user_ids)
