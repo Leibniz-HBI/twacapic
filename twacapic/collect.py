@@ -3,7 +3,6 @@ import os
 import shutil
 import time
 from glob import glob
-from pathlib import Path
 
 import twacapic.templates
 import yaml
@@ -82,30 +81,16 @@ class UserGroup:
 
             if 'errors' in tweets and 'data' not in tweets:
 
-                logger.error(tweets["errors"])
+                logger.warning(tweets["errors"])
 
                 if tweets['errors'][0]['title'] == 'Not Found Error':
-                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
-                                    Path.cwd()/'results'/f'deleted_{self.name}'/user_id,
-                                    dirs_exist_ok=True
-                                    )
-                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
+                    logger.warning(f'{user_id} not found.')
                 elif tweets['errors'][0]['title'] == 'Forbidden':
-                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
-                                    Path.cwd()/'results'/f'suspended_{self.name}'/user_id,
-                                    dirs_exist_ok=True
-                                    )
-                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
+                    logger.warning(f'{user_id} forbidden.')
                 elif tweets['errors'][0]['title'] == 'Authorization Error':
-                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
-                                    Path.cwd()/'results'/f'protected_{self.name}'/user_id,
-                                    dirs_exist_ok=True
-                                    )
-                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
+                    logger.warning(f'{user_id} Authorization Error.')
                 else:
                     raise TwitterRequestError(200, f"{tweets['errors']}")
-
-                self.user_ids.remove(user_id)
 
                 return None
 
