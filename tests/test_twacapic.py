@@ -550,6 +550,6 @@ def test_non_reachable_users(user_group_with_deleted_protected_accounts: UserGro
     user_group_with_deleted_protected_accounts.collect()  # check second time for errors because of missing metadata etc.
 
     assert (Path.cwd()/'results'/'test_non_reachable_users').is_dir()
-    assert (Path.cwd()/'results'/'deleted_test_non_reachable_users').is_dir()
+    assert not (Path.cwd()/'results'/'deleted_test_non_reachable_users').exists()
     assert not (Path.cwd()/'results'/'protected_test_non_reachable_users').exists()
     assert not (Path.cwd()/'results'/'suspended_test_non_reachable_users').exists()
