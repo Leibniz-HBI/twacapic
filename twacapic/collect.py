@@ -90,18 +90,10 @@ class UserGroup:
                                     dirs_exist_ok=True
                                     )
                     shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
-                elif tweets['errors'][0]['title'] == 'Forbidden':
-                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
-                                    Path.cwd()/'results'/f'suspended_{self.name}'/user_id,
-                                    dirs_exist_ok=True
-                                    )
-                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
-                elif tweets['errors'][0]['title'] == 'Authorization Error':
-                    shutil.copytree(Path.cwd()/'results'/self.name/user_id,
-                                    Path.cwd()/'results'/f'protected_{self.name}'/user_id,
-                                    dirs_exist_ok=True
-                                    )
-                    shutil.rmtree(Path.cwd()/'results'/self.name/user_id)
+                elif tweets['errors'][0]['title'] == 'Forbidden' or\
+                    tweets['errors'][0]['title'] == 'Authorization Error':
+                    #  ignore suspended and protected account errors
+                    return None
                 else:
                     raise TwitterRequestError(200, f"{tweets['errors']}")
 

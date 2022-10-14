@@ -1,3 +1,5 @@
+# pylint: disable=W1514,W0621,C0116
+
 import json
 import os
 import shutil
@@ -537,16 +539,17 @@ def test_expansions_in_tweets(user_group_with_tweets):
                 assert 'tweets' in tweets['includes']
 
 
-def test_non_reachable_users(user_group_with_deleted_protected_accounts):
+def test_non_reachable_users(user_group_with_deleted_protected_accounts: UserGroup):
 
     user_group_with_deleted_protected_accounts.collect()
     print(user_group_with_deleted_protected_accounts.user_ids)
 
-    assert os.listdir(user_group_with_deleted_protected_accounts.path) == ['group_config.yaml']
+    for item in os.listdir(user_group_with_deleted_protected_accounts.path):
+        assert item in ['group_config.yaml','2530965517','557558765']
 
     user_group_with_deleted_protected_accounts.collect()  # check second time for errors because of missing metadata etc.
 
     assert (Path.cwd()/'results'/'test_non_reachable_users').is_dir()
     assert (Path.cwd()/'results'/'deleted_test_non_reachable_users').is_dir()
-    assert (Path.cwd()/'results'/'protected_test_non_reachable_users').is_dir()
-    assert (Path.cwd()/'results'/'suspended_test_non_reachable_users').is_dir()
+    assert not (Path.cwd()/'results'/'protected_test_non_reachable_users').exists()
+    assert not (Path.cwd()/'results'/'suspended_test_non_reachable_users').exists()
