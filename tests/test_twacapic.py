@@ -38,6 +38,16 @@ def user_group():
 
 
 @pytest.fixture
+def user_group_to_get_all_the_tweets():
+
+    user_group = UserGroup('tests/mock_files/users.csv', name='test_users_get_all_the_tweets', get_all_the_tweets=True)
+
+    yield user_group
+
+    shutil.rmtree('results/test_users_get_all_the_tweets')
+
+
+@pytest.fixture
 def user_group_with_deleted_protected_accounts():
 
     user_group = UserGroup('tests/mock_files/protected_nonexistent_users.csv',
@@ -553,3 +563,15 @@ def test_non_reachable_users(user_group_with_deleted_protected_accounts):
     assert not (Path.cwd()/'results'/'deleted_test_non_reachable_users').exists()
     assert not (Path.cwd()/'results'/'protected_test_non_reachable_users').exists()
     assert not (Path.cwd()/'results'/'suspended_test_non_reachable_users').exists()
+
+
+def test_user_group_setup_for_getting_all_the_tweets(user_group_to_get_all_the_tweets):
+
+    for user_id in user_group_to_get_all_the_tweets.user_ids:
+        meta_file_path = f'{user_group_to_get_all_the_tweets.path}/{user_id}/meta.yaml'
+
+        with open(meta_file_path, 'r') as f:
+            metadata = yaml.safe_load(f)
+
+        assert metadata['newest_id'] == metadata['oldest_id']
+        assert metadata['newest_id'] == '0'
