@@ -51,6 +51,11 @@ def run():
         '-n', '--notify',
         help='If given, notify email address in case of unexpected errors. Needs further setup. See README.'
     )
+    parser.add_argument(
+        '-a', '--get_all_the_tweets',
+        action='store_true',
+        help='Get all available tweets (max. 3200) for a user on the first run.'
+    )
 
     args = parser.parse_args()
 
@@ -73,7 +78,7 @@ def run():
 
         save_credentials('twitter_keys.yaml', consumer_key, consumer_secret)
 
-    def one_run(userlist, groupname, config):
+    def one_run(userlist, groupname, config, get_all_the_tweets=False):
 
         if userlist is None:
             userlist = [None] * len(groupname)
@@ -83,7 +88,7 @@ def run():
         for userlist, groupname in userlists_and_groupnames:
 
             user_group = UserGroup(path=userlist, name=groupname,
-                                   config=config)
+                                   config=config, get_all_the_tweets=get_all_the_tweets)
 
             logger.info(f"Starting collection of {groupname}.")
 
@@ -92,7 +97,7 @@ def run():
             logger.info(f"Finished collection of {groupname}.")
 
     if args.schedule is None:
-        one_run(args.userlist, args.groupname, args.group_config)
+        one_run(args.userlist, args.groupname, args.group_config, args.get_all_the_tweets)
     else:
 
         if args.notify is not None:
@@ -105,7 +110,7 @@ def run():
 
         previous = overwrite('Wake up, samurai, we have work to do …', 0)
 
-        one_run(args.userlist, args.groupname, args.group_config)
+        one_run(args.userlist, args.groupname, args.group_config, args.get_all_the_tweets)
 
         while True:
             try:
