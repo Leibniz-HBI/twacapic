@@ -582,14 +582,15 @@ def test_user_group_setup_for_getting_all_the_tweets(user_group_to_get_all_the_t
 
 def test_collect_only_tweets_of_last_x_days(user_group_to_get_all_the_tweets):
 
-    days = random.randint(1,30)
+    days = random.randint(1,7)
 
     user_group_to_get_all_the_tweets.collect(days=days)
 
     for user_id in user_group_to_get_all_the_tweets.user_ids:
         tweet_files = user_group_to_get_all_the_tweets.tweet_files[user_id]
         tweet_files.sort(reverse=False)
-        oldest_tweet_id = tweet_files[0].split('/')[-1].split('_')[1]
+        oldest_tweet_id = tweet_files[0].split(
+            '/')[-1].split('_')[1].split('.')[0]
         timestamp = get_date_from_tweet_id(oldest_tweet_id)['timestamp']
         seconds_diff = time.time() - timestamp/1000
         hours_diff = seconds_diff/3600
