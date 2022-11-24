@@ -2,8 +2,10 @@
 
 import json
 import os
+import random
 import shutil
 import sys
+import time
 from glob import glob
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -17,6 +19,7 @@ from requests.exceptions import ConnectionError
 from twacapic import __version__
 from twacapic.auth import read_credentials, save_credentials
 from twacapic.collect import UserGroup
+from twacapic.utils import get_date_from_tweet_id
 from TwitterAPI import TwitterResponse
 from TwitterAPI.TwitterError import TwitterConnectionError
 
@@ -575,3 +578,21 @@ def test_user_group_setup_for_getting_all_the_tweets(user_group_to_get_all_the_t
 
         assert metadata['newest_id'] == metadata['oldest_id']
         assert metadata['newest_id'] == '0'
+
+
+def test_collect_only_tweets_of_last_x_days(user_group_to_get_all_the_tweets):
+
+    days = random.randint(1,30)
+
+    user_group_to_get_all_the_tweets.collect(days=days)
+
+    for user_id in user_group_to_get_all_the_tweets.user_ids:
+        tweet_files = user_group_to_get_all_the_tweets.tweet_files[user_id]
+        tweet_files.sort(reverse=False)
+        oldest_tweet_id = tweet_files[0].split('/')[-1].split('_')[1]
+        timestamp = get_date_from_tweet_id(oldest_tweet_id)['timestamp']
+        seconds_diff = time.time() - timestamp/1000
+        hours_diff = seconds_diff/3600
+        days_diff = hours_diff/24
+
+        assert days_diff <= days

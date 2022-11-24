@@ -143,7 +143,7 @@ class UserGroup:
 
         return oldest_id, newest_id
 
-    def collect(self, credential_path='twitter_keys.yaml', max_results_per_call=100):
+    def collect(self, credential_path='twitter_keys.yaml', max_results_per_call=100, days=None):
 
         api = get_api(credential_path)
 
