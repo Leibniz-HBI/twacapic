@@ -24,8 +24,7 @@ Or, simply install via pip:
 ## Usage
 
 ```txt
-usage: twacapic [-h] [-u [USERLIST ...]] [-g GROUPNAME [GROUPNAME ...]] [-c GROUP_CONFIG] [-l LOG_LEVEL] [-lf LOG_FILE]
-                [-s SCHEDULE] [-n NOTIFY]
+usage: twacapic [-h] [-u [USERLIST ...]] [-g GROUPNAME [GROUPNAME ...]] [-c GROUP_CONFIG] [-l LOG_LEVEL] [-lf LOG_FILE] [-s SCHEDULE] [-n NOTIFY] [-a] [-d DAYS]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -49,9 +48,12 @@ optional arguments:
                         If given, repeat every SCHEDULE minutes.
   -n NOTIFY, --notify NOTIFY
                         If given, notify email address in case of unexpected errors. Needs further setup. See README.
+  -a, --get_all_the_tweets
+                        Get all available tweets (max. 3200) for a user on the first run. Constrain with the --d option to last x days.
+  -d DAYS, --days DAYS  Use only together with -a. Only get tweets posted in the last DAYS days.
 ```
 
-At the moment twacapic can only collect the latest 100 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name or if the `-s` argument is given.
+At the moment twacapic can only collect up to the latest 3200 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name (without the -a or -d tags!) or if the `-s` argument is given.
 
 Email notifications with the `-n` argument use [yagmail](https://pypi.org/project/yagmail/) and necessitate a file named `gmail_creds.yaml` in the working directory in the following format:
 
