@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import time
+from datetime import datetime
 from glob import glob
 
 import twacapic.templates
@@ -143,7 +144,7 @@ class UserGroup:
 
         return oldest_id, newest_id
 
-    def collect(self, credential_path='twitter_keys.yaml', max_results_per_call=100):
+    def collect(self, credential_path='twitter_keys.yaml', max_results_per_call=100, days=None):
 
         api = get_api(credential_path)
 
@@ -167,6 +168,14 @@ class UserGroup:
             params = {}
             params['tweet.fields'] = ','.join(fields)
             params['expansions'] = ','.join(expansions)
+
+            if days is not None:
+
+                seconds = days * 24 * 3600
+                earliest_timestamp = time.time() - seconds
+                dt_object = datetime.fromtimestamp(earliest_timestamp)
+                param_date_string = f'{dt_object.isoformat(timespec="seconds")}Z'
+                params['start_time'] = param_date_string
 
             logger.info(f"Collecting tweets for user {user_id} …")
 
@@ -194,10 +203,11 @@ class UserGroup:
 
                 params['max_results'] = max_results_per_call
 
-                try:
-                    params['since_id'] = user_metadata['newest_id']
-                except KeyError:
-                    pass
+                if days is None:
+                    try:
+                        params['since_id'] = user_metadata['newest_id']
+                    except KeyError:
+                        pass
 
                 collected_ids = self.request_tweets(api, user_id, params, get_all_pages=True)
 

@@ -54,7 +54,11 @@ def run():
     parser.add_argument(
         '-a', '--get_all_the_tweets',
         action='store_true',
-        help='Get all available tweets (max. 3200) for a user on the first run.'
+        help='Get all available tweets (max. 3200) for a user on the first run. Constrain with the --d option to last x days.'
+    )
+    parser.add_argument(
+        '-d', '--days',
+        help='Use only together with -a. Only get tweets posted in the last DAYS days.'
     )
 
     args = parser.parse_args()
@@ -70,6 +74,9 @@ def run():
     logger.add('errors.log', level='ERROR')
     logger.add('warnings.log', level='WARNING')
 
+    if args.days is not None:
+        args.days = int(args.days)
+
     print("Hello friend …")
 
     if not os.path.isfile('twitter_keys.yaml'):
@@ -78,7 +85,7 @@ def run():
 
         save_credentials('twitter_keys.yaml', consumer_key, consumer_secret)
 
-    def one_run(userlist, groupname, config, get_all_the_tweets=False):
+    def one_run(userlist, groupname, config, get_all_the_tweets=False, days=None):
 
         if userlist is None:
             userlist = [None] * len(groupname)
@@ -92,12 +99,12 @@ def run():
 
             logger.info(f"Starting collection of {groupname}.")
 
-            user_group.collect()
+            user_group.collect(days=days)
 
             logger.info(f"Finished collection of {groupname}.")
 
     if args.schedule is None:
-        one_run(args.userlist, args.groupname, args.group_config, args.get_all_the_tweets)
+        one_run(args.userlist, args.groupname, args.group_config, args.get_all_the_tweets, args.days)
     else:
 
         if args.notify is not None:
@@ -110,7 +117,7 @@ def run():
 
         previous = overwrite('Wake up, samurai, we have work to do …', 0)
 
-        one_run(args.userlist, args.groupname, args.group_config, args.get_all_the_tweets)
+        one_run(args.userlist, args.groupname, args.group_config, args.get_all_the_tweets, args.days)
 
         while True:
             try:
