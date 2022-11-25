@@ -15,9 +15,9 @@ logger.remove()
 
 class UserGroup:
 
-    def __init__(self, path=None, name=None, config=None):
+    def __init__(self, path=None, name=None, config=None, get_all_the_tweets=False):
 
-        self.source_path = path
+        self.source_path = path  # TODO: better naming, path is the path to the list of ids, not to the group folder
         self.path = f'results/{name}'
         self.name = name
 
@@ -27,6 +27,14 @@ class UserGroup:
                 for line in file:
                     user_id = line.strip()
                     os.makedirs(f'results/{name}/{user_id}', exist_ok=True)
+
+                    if get_all_the_tweets is True:
+                        meta_file_path = f'{self.path}/{user_id}/meta.yaml'
+                        user_metadata = {'newest_id': '0', 'oldest_id': '0'}
+
+                        with open(meta_file_path, 'w') as metafile:
+                            yaml.dump(user_metadata, metafile)
+
                     self.user_ids.append(user_id)
         else:
             self.user_ids = [
