@@ -6,6 +6,7 @@ import time
 
 import schedule
 from loguru import logger
+from twacapic import __version__
 from twacapic.auth import save_credentials
 from twacapic.collect import UserGroup
 from twacapic.notifications import send_mail
@@ -60,8 +61,17 @@ def run():
         '-d', '--days',
         help='Use only together with -a. Only get tweets posted in the last DAYS days.'
     )
+    parser.add_argument(
+        '-v', '--version',
+        action='store_true',
+        help='Print version of twacapic.'
+    )
 
     args = parser.parse_args()
+
+    if args.version:
+        print(__version__)
+        return 0
 
     if args.userlist is not None:
         assert len(args.userlist) == len(args.groupname), 'Not all userlist paths have been defined.'
