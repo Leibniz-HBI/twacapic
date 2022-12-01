@@ -160,6 +160,12 @@ class UserGroup:
             expansion for expansion in expansions_config if expansions_config[expansion]
         ]
 
+        user_field_config = self.config['user.fields']
+
+        user_fields = [
+            user_field for user_field in user_field_config if user_field_config[user_field]
+        ]
+
         iterlist = self.user_ids.copy()
         # copy needed because self.user_ids changes during iteration … what a bedbug …
 
@@ -168,6 +174,7 @@ class UserGroup:
             params = {}
             params['tweet.fields'] = ','.join(fields)
             params['expansions'] = ','.join(expansions)
+            params['user.fields'] = ','.join(user_fields)
 
             if days is not None:
 

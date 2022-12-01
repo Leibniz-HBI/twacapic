@@ -554,8 +554,8 @@ def test_expansions_in_tweets(user_group_with_tweets):
                 for user in tweets['includes']['users']:
                     for key in ['public_metrics',
                                 'created_at',
-                                'description,'
-                                'location',
+                                'description',
+                                # 'location', can be empty
                                 'verified']:
                         assert key in user.keys()
 
