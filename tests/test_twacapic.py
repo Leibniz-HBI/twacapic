@@ -551,6 +551,14 @@ def test_expansions_in_tweets(user_group_with_tweets):
                 assert 'users' in tweets['includes']
                 assert 'tweets' in tweets['includes']
 
+                for user in tweets['includes']['users']:
+                    for key in ['public_metrics',
+                                'created_at',
+                                'description,'
+                                'location',
+                                'verified']:
+                        assert key in user.keys()
+
 
 def test_non_reachable_users(user_group_with_deleted_protected_accounts):
 
