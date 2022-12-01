@@ -24,24 +24,18 @@ Or, simply install via pip:
 ## Usage
 
 ```txt
-usage: twacapic [-h] [-u [USERLIST ...]] [-g GROUPNAME [GROUPNAME ...]] [-c GROUP_CONFIG] [-l LOG_LEVEL] [-lf LOG_FILE] [-s SCHEDULE] [-n NOTIFY] [-a] [-d DAYS]
+usage: twacapic [-h] [-u [USERLIST ...]] [-g GROUPNAME [GROUPNAME ...]] [-c GROUP_CONFIG] [-l LOG_LEVEL] [-lf LOG_FILE] [-s SCHEDULE] [-n NOTIFY] [-a] [-d DAYS] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u [USERLIST ...], --userlist [USERLIST ...]
-                        Path(s) to list(s) of user IDs, (format: one ID per line). Required for first run only. Same
-                        number and corresponding order required as in --groupname argument. Can be used to add users to
-                        a group.
+                        Path(s) to list(s) of user IDs, (format: one ID per line). Required for first run only. Same number and corresponding order required as in --groupname argument. Can be used to add users to a group.
   -g GROUPNAME [GROUPNAME ...], --groupname GROUPNAME [GROUPNAME ...]
-                        Name(s) of the group(s) to collect. Results will be saved in folder `results/GROUPNAME/`. Can
-                        be used to poll for new tweets of a group. Default: "users"
+                        Name(s) of the group(s) to collect. Results will be saved in folder `results/GROUPNAME/`. Can be used to poll for new tweets of a group. Default: "users"
   -c GROUP_CONFIG, --group_config GROUP_CONFIG
-                        Path to a custom group config file to define tweet data to be retrieved, e.g. retweets,
-                        mentioned users, attachments. A template named `group_config.yaml` can be found in any already
-                        created group folder.
+                        Path to a custom group config file to define tweet data to be retrieved, e.g. retweets, mentioned users, attachments. A template named `group_config.yaml` can be found in any already created group folder.
   -l LOG_LEVEL, --log_level LOG_LEVEL
-                        Level of output detail (DEBUG, INFO, WARNING, ERROR). Warnings and Errors are always logged in
-                        respective log-files `errors.log` and `warnings.log`. Default: ERROR
+                        Level of output detail (DEBUG, INFO, WARNING, ERROR). Warnings and Errors are always logged in respective log-files `errors.log` and `warnings.log`. Default: ERROR
   -lf LOG_FILE, --log_file LOG_FILE
                         Path to logfile. Defaults to standard output.
   -s SCHEDULE, --schedule SCHEDULE
@@ -51,9 +45,10 @@ optional arguments:
   -a, --get_all_the_tweets
                         Get all available tweets (max. 3200) for a user on the first run. Constrain with the --d option to last x days.
   -d DAYS, --days DAYS  Use only together with -a. Only get tweets posted in the last DAYS days.
+  -v, --version         Print version of twacapic.
 ```
 
-At the moment twacapic can only collect up to the latest 3200 tweets of a list of users and then poll for new tweets afterwards if called again with the same group name (without the -a or -d tags!) or if the `-s` argument is given.
+At the moment twacapic can collect up to the latest 3200 tweets from an earliest date on of a list of users and then poll for new tweets afterwards if called again with the same group name (without the -a or -d tags!) or if the `-s` argument is given.
 
 Email notifications with the `-n` argument use [yagmail](https://pypi.org/project/yagmail/) and necessitate a file named `gmail_creds.yaml` in the working directory in the following format:
 
@@ -91,7 +86,6 @@ The group config is a yaml file in the following form:
 ```yaml
 fields:
   attachments: No
-  author_id: Yes
   context_annotations: No
   conversation_id: No
   created_at: No
@@ -109,7 +103,6 @@ fields:
   source: No
   withheld: No
 expansions:
-  author_id: Yes
   referenced_tweets.id: No
   in_reply_to_user_id: No
   attachments.media_keys: No
@@ -117,6 +110,20 @@ expansions:
   geo.place_id: No
   entities.mentions.username: No
   referenced_tweets.id.author_id: No
+user.fields:
+  created_at: No
+  description: No
+  entities: No
+  location: No
+  name: No
+  pinned_tweet_id: No
+  profile_image_url: No
+  protected: No
+  public_metrics: No
+  url: No
+  username: No
+  verified: No
+  withheld: No
 ```
 
 An explanation of the fields and expansions can be found in Twitter's API docs:
