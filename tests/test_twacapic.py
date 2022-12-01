@@ -184,7 +184,7 @@ def failed_response_mock():
 @pytest.fixture
 def minimal_config_path():
     path = 'minimal_config.yaml'
-    min_config = {'expansions': {}, 'fields': {}}
+    min_config = {'expansions': {}, 'fields': {}, 'user.fields': {}}
     with open(path, 'w') as f:
         yaml.dump(min_config, f)
 
