@@ -27,7 +27,7 @@ logger.add(sys.stdout, level='INFO')
 
 
 def test_version():
-    assert __version__ == '0.8.0'
+    assert __version__ == '0.8.1'
 
 
 @pytest.fixture
@@ -184,7 +184,7 @@ def failed_response_mock():
 @pytest.fixture
 def minimal_config_path():
     path = 'minimal_config.yaml'
-    min_config = {'expansions': {}, 'fields': {}}
+    min_config = {'expansions': {}, 'fields': {}, 'user.fields': {}}
     with open(path, 'w') as f:
         yaml.dump(min_config, f)
 
@@ -550,6 +550,14 @@ def test_expansions_in_tweets(user_group_with_tweets):
                 assert 'includes' in tweets
                 assert 'users' in tweets['includes']
                 assert 'tweets' in tweets['includes']
+
+                for user in tweets['includes']['users']:
+                    for key in ['public_metrics',
+                                'created_at',
+                                'description',
+                                # 'location', can be empty
+                                'verified']:
+                        assert key in user.keys()
 
 
 def test_non_reachable_users(user_group_with_deleted_protected_accounts):

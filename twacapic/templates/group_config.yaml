@@ -26,3 +26,18 @@ expansions:
   geo.place_id: Yes
   entities.mentions.username: Yes
   referenced_tweets.id.author_id: Yes
+user.fields:
+  created_at: Yes
+  description: Yes
+  entities: No
+  id: Yes
+  location: Yes
+  name: Yes
+  pinned_tweet_id: Yes
+  profile_image_url: No
+  protected: Yes
+  public_metrics: Yes
+  url: Yes
+  username: Yes
+  verified: Yes
+  withheld: Yes

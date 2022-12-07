@@ -26,3 +26,18 @@ expansions:
   geo.place_id: No
   entities.mentions.username: No
   referenced_tweets.id.author_id: No
+user.fields:
+  created_at: No
+  description: No
+  entities: No
+  id: No
+  location: No
+  name: No
+  pinned_tweet_id: No
+  profile_image_url: No
+  protected: No
+  public_metrics: No
+  url: No
+  username: No
+  verified: No
+  withheld: No
